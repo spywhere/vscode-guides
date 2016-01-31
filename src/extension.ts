@@ -40,9 +40,11 @@ class Guides {
 
     private rulerStops: number[] = [];
 
+    private configurations: any;
+
     reset(){
         this.dispose();
-        this.createGuides();
+        this.loadSettings();
         this.updateEditors();
     }
 
@@ -55,21 +57,21 @@ class Guides {
         }
     }
 
-    createGuides(){
-        var configurations:any = vscode.workspace.getConfiguration("guides");
+    loadSettings(){
+        this.configurations = vscode.workspace.getConfiguration("guides");
 
         this.normalGuideDecoration = vscode.window.createTextEditorDecorationType({
-            outlineWidth: configurations.normal.width,
-            outlineColor: configurations.normal.color,
-            outlineStyle: configurations.normal.style
+            outlineWidth: this.configurations.normal.width,
+            outlineColor: this.configurations.normal.color,
+            outlineStyle: this.configurations.normal.style
         });
         this.rulerGuideDecoration = vscode.window.createTextEditorDecorationType({
-            outlineWidth: configurations.ruler.width,
-            outlineColor: configurations.ruler.color,
-            outlineStyle: configurations.ruler.style
+            outlineWidth: this.configurations.ruler.width,
+            outlineColor: this.configurations.ruler.color,
+            outlineStyle: this.configurations.ruler.style
         });
 
-        this.rulerStops = configurations.rulers;
+        this.rulerStops = this.configurations.rulers;
     }
 
     updateEditors(){
@@ -87,10 +89,21 @@ class Guides {
             );
             guidelines.forEach((guideline) => {
                 var position = new vscode.Position(line, guideline.position);
+                var inSelection = false;
+                editor.selections.forEach((selection) => {
+                    if(selection.contains(position)){
+                        inSelection = true;
+                        return;
+                    }
+                });
                 if(guideline.type === "normal"){
-                    normalRanges.push(new vscode.Range(position, position));
+                    if(!inSelection || (inSelection && !this.configurations.normal.hideOnSelection)){
+                        normalRanges.push(new vscode.Range(position, position));
+                    }
                 }else{
-                    rulerRanges.push(new vscode.Range(position, position));
+                    if(!inSelection || (inSelection && !this.configurations.ruler.hideOnSelection)){
+                        rulerRanges.push(new vscode.Range(position, position));
+                    }
                 }
             });
         }

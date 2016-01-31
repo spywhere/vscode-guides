@@ -24,6 +24,9 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Normal indentation guides rendering style.
 "guides.normal.style": "solid",
 
+// Hide normal indentation guides in selections.
+"guides.normal.hideOnSelection": true,
+
 // Ruler guide stop points.
 "guides.rulers": [],
 
@@ -34,7 +37,10 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.ruler.color": "#cc9999",
 
 // Ruler guides rendering style.
-"guides.ruler.style": "solid"
+"guides.ruler.style": "solid",
+
+// Hide ruler guides in selections.
+"guides.ruler.hideOnSelection": true
 ```
 Possible values can be access via auto-completion dialog.
 

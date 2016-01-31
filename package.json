@@ -47,6 +47,12 @@
                         "groove", "ridge", "inset", "outset"
                     ]
                 },
+                "guides.normal.hideOnSelection": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Hide normal indentation guides in selections.",
+                    "enum": [true, false]
+                },
                 "guides.rulers": {
                     "type": "array",
                     "default": [],
@@ -70,6 +76,12 @@
                         "none", "dotted", "dashed", "solid", "double",
                         "groove", "ridge", "inset", "outset"
                     ]
+                },
+                "guides.ruler.hideOnSelection": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Hide ruler guides in selections.",
+                    "enum": [true, false]
                 }
             }
         }
