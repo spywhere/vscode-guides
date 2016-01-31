@@ -16,10 +16,13 @@ class GuidesController {
 
         let subscriptions: vscode.Disposable[] = [];
         vscode.window.onDidChangeTextEditorSelection(
-            this.onEvent, this, subscriptions
+            this.updateEditor, this, subscriptions
         );
         vscode.window.onDidChangeActiveTextEditor(
-            this.onEvent, this, subscriptions
+            this.updateEditor, this, subscriptions
+        );
+        vscode.workspace.onDidChangeConfiguration(
+            this.updateEditors, this, subscriptions
         );
 
         this.disposable = vscode.Disposable.from(...subscriptions);
@@ -29,16 +32,18 @@ class GuidesController {
         this.disposable.dispose();
     }
 
-    private onEvent(){
+    private updateEditor(){
         this.guides.updateEditor(vscode.window.activeTextEditor);
+    }
+
+    private updateEditors(){
+        this.guides.reset();
     }
 }
 
 class Guides {
     public normalGuideDecoration: vscode.TextEditorDecorationType;
     public rulerGuideDecoration: vscode.TextEditorDecorationType;
-
-    private rulerStops: number[] = [];
 
     private configurations: any;
 
@@ -70,8 +75,6 @@ class Guides {
             outlineColor: this.configurations.ruler.color,
             outlineStyle: this.configurations.ruler.style
         });
-
-        this.rulerStops = this.configurations.rulers;
     }
 
     updateEditors(){
@@ -81,6 +84,8 @@ class Guides {
     }
 
     updateEditor(editor: vscode.TextEditor){
+        // Store the array and manipulate the array instead
+        // To increate the performances
         var normalRanges: vscode.Range[] = [];
         var rulerRanges: vscode.Range[] = [];
         for(var line=0; line < editor.document.lineCount; line++){
@@ -99,16 +104,28 @@ class Guides {
                 if(guideline.type === "normal"){
                     if(!inSelection || (inSelection && !this.configurations.normal.hideOnSelection)){
                         normalRanges.push(new vscode.Range(position, position));
+                    }else{
+                        normalRanges.push(null);
                     }
                 }else{
                     if(!inSelection || (inSelection && !this.configurations.ruler.hideOnSelection)){
                         rulerRanges.push(new vscode.Range(position, position));
+                    }else{
+                        normalRanges.push(null);
                     }
                 }
             });
         }
-        editor.setDecorations(this.normalGuideDecoration, normalRanges);
-        editor.setDecorations(this.rulerGuideDecoration, rulerRanges);
+        editor.setDecorations(this.normalGuideDecoration, normalRanges.filter(
+            (range) => {
+                return range !== null;
+            }
+        ));
+        editor.setDecorations(this.rulerGuideDecoration, rulerRanges.filter(
+            (range) => {
+                return range !== null;
+            }
+        ));
     }
 
     getGuides(line: vscode.TextLine, indentSize: number){
@@ -129,7 +146,7 @@ class Guides {
         );
         var singleMatch = whitespaces.match(pattern);
 
-        this.rulerStops.forEach((stop) => {
+        this.configurations.rulers.forEach((stop) => {
             var sourceIndex = 0;
             var index = 0;
             if(stop < line.text.replace(pattern, emptySpace).length){

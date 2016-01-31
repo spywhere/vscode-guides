@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
