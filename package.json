@@ -1,9 +1,9 @@
 {
-	"name": "guides",
-	"displayName": "Guides",
-	"description": "An extension for more guide lines",
-	"version": "0.0.1",
-	"publisher": "spywhere",
+    "name": "guides",
+    "displayName": "Guides",
+    "description": "An extension for more guide lines",
+    "version": "0.0.1",
+    "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
         "url": "https://github.com/spywhere/vscode-guides/issues"
@@ -12,19 +12,19 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/spywhere/vscode-guides.git"
-	},
-	"engines": {
-		"vscode": "^0.10.1"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"configuration": {
+    },
+    "engines": {
+        "vscode": "^0.10.1"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "configuration": {
             "type": "object",
             "title": "Guides Configurations",
             "properties": {
@@ -73,13 +73,13 @@
                 }
             }
         }
-	},
-	"scripts": {
-		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
-	},
-	"devDependencies": {
-		"typescript": "^1.6.2",
-		"vscode": "0.10.x"
-	}
+    },
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+    },
+    "devDependencies": {
+        "typescript": "^1.6.2",
+        "vscode": "0.10.x"
+    }
 }
