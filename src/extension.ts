@@ -45,6 +45,7 @@ class Guides {
     public normalGuideDecoration: vscode.TextEditorDecorationType;
     public rulerGuideDecoration: vscode.TextEditorDecorationType;
 
+    private hasShowSuggestion: boolean = false;
     private configurations: any;
 
     reset(){
@@ -84,6 +85,12 @@ class Guides {
     }
 
     updateEditor(editor: vscode.TextEditor){
+        // If no editor set, do nothing
+        //   This can occur when active editor is not set
+        if(!editor){
+            return;
+        }
+
         // Store the array and manipulate the array instead
         // To increate the performances
         var normalRanges: vscode.Range[] = [];
@@ -109,9 +116,21 @@ class Guides {
                     }
                 }else{
                     if(!inSelection || (inSelection && !this.configurations.ruler.hideOnSelection)){
+                        if(
+                            !this.hasShowSuggestion &&
+                            this.isEqualOrNewerVersionThan(0, 10, 10)
+                        ){
+                            this.hasShowSuggestion = true;
+                            vscode.window.showInformationMessage(
+                                "Visual Studio Code has built-in ruler" +
+                                " feature. Guides extension kindly " +
+                                "suggests that you use built-in feature "+
+                                "rather than using this extension."
+                            );
+                        }
                         rulerRanges.push(new vscode.Range(position, position));
                     }else{
-                        normalRanges.push(null);
+                        rulerRanges.push(null);
                     }
                 }
             });
@@ -179,5 +198,20 @@ class Guides {
             });
         }
         return guides;
+    }
+
+    isEqualOrNewerVersionThan(major: number, minor: number, patch: number){
+        var targetVersions = [major, minor, patch];
+        var currentVersions = vscode.version.split(".").map((value)=>{
+            return parseInt(value);
+        });
+        for (var index = 0; index < targetVersions.length; index++) {
+            var targetVersion = targetVersions[index];
+            var currentVersion = currentVersions[index];
+            if(currentVersion < targetVersion){
+                return false;
+            }
+        }
+        return true;
     }
 }
