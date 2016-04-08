@@ -33,7 +33,7 @@ class GuidesController {
     }
 
     private updateEditor(){
-        this.guides.updateEditor(vscode.window.activeTextEditor);
+        this.guides.setNeedsUpdateEditor(vscode.window.activeTextEditor);
     }
 
     private updateEditors(){
@@ -49,6 +49,8 @@ class Guides {
     private hasShowSuggestion: boolean = false;
     private configurations: any;
 
+    private updateTimer: number = null;
+
     reset(){
         this.clearEditorsDecorations();
         this.dispose();
@@ -57,6 +59,9 @@ class Guides {
     }
 
     dispose(){
+        if(this.updateTimer !== null){
+            clearTimeout(this.updateTimer);
+        }
         if(this.normalGuideDecor){
             this.normalGuideDecor.dispose();
         }
@@ -102,6 +107,15 @@ class Guides {
                 editor.setDecorations(this.rulerGuideDecor, []);
             }
         });
+    }
+
+    setNeedsUpdateEditor(editor: vscode.TextEditor){
+        if(this.updateTimer !== null){
+            clearTimeout(this.updateTimer);
+        }
+        this.updateTimer = setTimeout(() => {
+            this.updateEditor(editor);
+        }, 100);
     }
 
     updateEditors(){

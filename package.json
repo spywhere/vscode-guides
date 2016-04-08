@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
@@ -44,7 +44,7 @@
                 },
                 "guides.normal.color": {
                     "type": "string",
-                    "default": "#333333",
+                    "default": "rgba(60, 60, 60, 0.75)",
                     "description": "Normal indentation guides rendering color."
                 },
                 "guides.normal.style": {
