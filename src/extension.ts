@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
     var guides = new Guides();
-	context.subscriptions.push(new GuidesController(guides));
+    context.subscriptions.push(new GuidesController(guides));
     context.subscriptions.push(guides);
 }
 
@@ -42,39 +42,65 @@ class GuidesController {
 }
 
 class Guides {
-    public normalGuideDecoration: vscode.TextEditorDecorationType;
-    public rulerGuideDecoration: vscode.TextEditorDecorationType;
+    private normalGuideDecor: vscode.TextEditorDecorationType;
+    private rulerGuideDecor: vscode.TextEditorDecorationType;
+    private normalGuideBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion: boolean = false;
     private configurations: any;
 
     reset(){
+        this.clearEditorsDecorations();
         this.dispose();
         this.loadSettings();
         this.updateEditors();
     }
 
     dispose(){
-        if(this.normalGuideDecoration){
-            this.normalGuideDecoration.dispose();
+        if(this.normalGuideDecor){
+            this.normalGuideDecor.dispose();
         }
-        if(this.rulerGuideDecoration){
-            this.rulerGuideDecoration.dispose();
+        if(this.rulerGuideDecor){
+            this.rulerGuideDecor.dispose();
         }
     }
 
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
 
-        this.normalGuideDecoration = vscode.window.createTextEditorDecorationType({
+        this.normalGuideBackgroundDecors = [];
+        this.configurations.normal.backgrounds.forEach((backgroundColor) => {
+            this.normalGuideBackgroundDecors.push(
+                vscode.window.createTextEditorDecorationType({
+                    backgroundColor: backgroundColor
+                })
+            );
+        });
+        this.normalGuideDecor = vscode.window.createTextEditorDecorationType({
             outlineWidth: this.configurations.normal.width,
             outlineColor: this.configurations.normal.color,
             outlineStyle: this.configurations.normal.style
         });
-        this.rulerGuideDecoration = vscode.window.createTextEditorDecorationType({
+        this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
             outlineWidth: this.configurations.ruler.width,
             outlineColor: this.configurations.ruler.color,
             outlineStyle: this.configurations.ruler.style
+        });
+    }
+
+    clearEditorsDecorations(){
+        vscode.window.visibleTextEditors.forEach((editor) => {
+            if(this.normalGuideBackgroundDecors){
+                this.normalGuideBackgroundDecors.forEach((decoration) => {
+                    editor.setDecorations(decoration, []);
+                });
+            }
+            if(this.normalGuideDecor){
+                editor.setDecorations(this.normalGuideDecor, []);
+            }
+            if(this.rulerGuideDecor){
+                editor.setDecorations(this.rulerGuideDecor, []);
+            }
         });
     }
 
@@ -92,14 +118,17 @@ class Guides {
         }
 
         // Store the array and manipulate the array instead
-        // To increate the performances
+        //   To increase the performances
         var normalRanges: vscode.Range[] = [];
+        var normalBackgrounds: any[] = [];
         var rulerRanges: vscode.Range[] = [];
+        var maxLevel = this.normalGuideBackgroundDecors.length;
         for(var line=0; line < editor.document.lineCount; line++){
             var guidelines = this.getGuides(
                 editor.document.lineAt(line), editor.options.tabSize
             );
-            guidelines.forEach((guideline) => {
+            var lastPosition = new vscode.Position(line, 0);
+            guidelines.forEach((guideline, level) => {
                 var position = new vscode.Position(line, guideline.position);
                 var inSelection = false;
                 editor.selections.forEach((selection) => {
@@ -108,39 +137,67 @@ class Guides {
                         return;
                     }
                 });
-                if(guideline.type === "normal"){
-                    if(!inSelection || (inSelection && !this.configurations.normal.hideOnSelection)){
-                        normalRanges.push(new vscode.Range(position, position));
-                    }else{
-                        normalRanges.push(null);
+                if(guideline.type === "normal" || guideline.type === "extra"){
+                    // Add background color stop points if there are colors
+                    if(maxLevel > 0){
+                        normalBackgrounds.push({
+                            level: level,
+                            range: new vscode.Range(
+                                lastPosition, position
+                            )
+                        });
                     }
-                }else{
-                    if(!inSelection || (inSelection && !this.configurations.ruler.hideOnSelection)){
-                        if(
-                            !this.hasShowSuggestion &&
-                            this.isEqualOrNewerVersionThan(0, 10, 10)
-                        ){
-                            this.hasShowSuggestion = true;
-                            vscode.window.showInformationMessage(
-                                "Visual Studio Code has built-in ruler" +
-                                " feature. Guides extension kindly " +
-                                "suggests that you use built-in feature "+
-                                "rather than using this extension."
-                            );
-                        }
+                    if(
+                        guideline.type === "normal" &&
+                        (!inSelection || (
+                            inSelection &&
+                            !this.configurations.normal.hideOnSelection
+                        ))
+                    ){
+                        normalRanges.push(new vscode.Range(position, position));
+                    }
+                }else if(guideline.type === "ruler"){
+                    if(
+                        !this.hasShowSuggestion &&
+                        this.isEqualOrNewerVersionThan(0, 10, 10)
+                    ){
+                        this.hasShowSuggestion = true;
+                        vscode.window.showInformationMessage(
+                            "Visual Studio Code has built-in ruler" +
+                            " feature. Guides extension kindly " +
+                            "suggests that you use built-in feature "+
+                            "rather than using this extension."
+                        );
+                    }
+                    if(
+                        !inSelection || (
+                            inSelection &&
+                            !this.configurations.ruler.hideOnSelection
+                        )
+                    ){
                         rulerRanges.push(new vscode.Range(position, position));
-                    }else{
-                        rulerRanges.push(null);
                     }
                 }
+                lastPosition = position;
             });
         }
-        editor.setDecorations(this.normalGuideDecoration, normalRanges.filter(
+        this.normalGuideBackgroundDecors.forEach((decoration, level) => {
+            editor.setDecorations(decoration, normalBackgrounds.filter(
+                (stopPoint) => {
+                    return (
+                        stopPoint.level % maxLevel === level
+                    );
+                }
+            ).map((stopPoint) => {
+                return stopPoint.range;
+            }));
+        });
+        editor.setDecorations(this.normalGuideDecor, normalRanges.filter(
             (range) => {
                 return range !== null;
             }
         ));
-        editor.setDecorations(this.rulerGuideDecoration, rulerRanges.filter(
+        editor.setDecorations(this.rulerGuideDecor, rulerRanges.filter(
             (range) => {
                 return range !== null;
             }
@@ -188,12 +245,14 @@ class Guides {
         var index = 0;
         for(
             var indentLevel=0;
-            indentLevel < singleMatch.length - 1;
+            indentLevel < singleMatch.length;
             indentLevel++
         ){
             index += singleMatch[indentLevel].length;
             guides.push({
-                type: "normal",
+                type: (
+                    indentLevel < singleMatch.length - 1
+                ) ? "normal" : "extra",
                 position: index
             });
         }

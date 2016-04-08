@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.0.4",
+    "version": "0.1.0",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
@@ -28,6 +28,15 @@
             "type": "object",
             "title": "Guides Configurations",
             "properties": {
+                "guides.normal.backgrounds": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "string",
+                        "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
+                    },
+                    "description": "Normal indentation background colors."
+                },
                 "guides.normal.width": {
                     "type": "string",
                     "default": "1px",

@@ -4,7 +4,7 @@ A Visual Studio Code extension for more guide lines
 ![Screenshot](images/screenshot.png)
 
 ### What is Guides?
-Guides is simply an extension that add an indentation guideline and your own ruler guide lines.
+Guides is simply an extension that add indentation guide lines and your own ruler guide lines.
 
 ### How it works?
 Simply install the extension, Guides should do it job right away (after restart)!
@@ -14,6 +14,11 @@ Simply install the extension, Guides should do it job right away (after restart)
 ### What are the settings?
 ```
 //-------- Guides Configurations --------
+
+// Normal indentation background colors. This settings may cause slow performance on multiple indentations.
+//   Each color will be used for each indentation level and will loop around itself.
+//   Values must be in "rgba(red, green, blue, alpha)" format.
+"guides.normal.backgrounds": [],
 
 // Normal indentation guides rendering width.
 "guides.normal.width": "1px",
