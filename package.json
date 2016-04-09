@@ -91,6 +91,12 @@
                     "default": true,
                     "description": "Hide ruler guides in selections.",
                     "enum": [true, false]
+                },
+                "guides.updateDelay": {
+                    "type": "number",
+                    "default": 0.1,
+                    "description": "Time duration between each guide lines update (in seconds).",
+                    "minimum": 0.01
                 }
             }
         }

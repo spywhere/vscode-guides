@@ -49,6 +49,7 @@ class Guides {
     private hasShowSuggestion: boolean = false;
     private configurations: any;
 
+    private timerDelay: number = 0.1;
     private updateTimer: number = null;
 
     reset(){
@@ -111,11 +112,12 @@ class Guides {
 
     setNeedsUpdateEditor(editor: vscode.TextEditor){
         if(this.updateTimer !== null){
-            clearTimeout(this.updateTimer);
+            return;
         }
         this.updateTimer = setTimeout(() => {
+            this.updateTimer = null;
             this.updateEditor(editor);
-        }, 100);
+        }, this.timerDelay * 1000);
     }
 
     updateEditors(){
