@@ -24,7 +24,7 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.normal.width": "1px",
 
 // Normal indentation guides rendering color.
-"guides.normal.color": "#333333",
+"guides.normal.color": "rgba(60, 60, 60, 0.75)",
 
 // Normal indentation guides rendering style.
 "guides.normal.style": "solid",
@@ -45,7 +45,14 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.ruler.style": "solid",
 
 // Hide ruler guides in selections.
-"guides.ruler.hideOnSelection": true
+"guides.ruler.hideOnSelection": true,
+
+// Time duration between each guide lines update (in seconds).
+"guides.updateDelay": 0.1,
+
+// Override default Visual Studio Code behaviours.
+//   Set to "true" to suppress any suggestion towards default Visual Studio Code behaviours.
+"guides.overrideDefault": false,
 ```
 Possible values can be access via auto-completion dialog.
 

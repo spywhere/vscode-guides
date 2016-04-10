@@ -16,10 +16,10 @@ class GuidesController {
 
         let subscriptions: vscode.Disposable[] = [];
         vscode.window.onDidChangeTextEditorSelection(
-            this.updateEditor, this, subscriptions
+            this.updateSelection, this, subscriptions
         );
         vscode.window.onDidChangeActiveTextEditor(
-            this.updateEditor, this, subscriptions
+            this.updateActiveEditor, this, subscriptions
         );
         vscode.workspace.onDidChangeConfiguration(
             this.updateEditors, this, subscriptions
@@ -32,8 +32,16 @@ class GuidesController {
         this.disposable.dispose();
     }
 
-    private updateEditor(){
-        this.guides.setNeedsUpdateEditor(vscode.window.activeTextEditor);
+    private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
+        if(event.selections.some((selection) => {
+            return !selection.isEmpty;
+        })){
+            this.guides.setNeedsUpdateEditor(event.textEditor);
+        }
+    }
+
+    private updateActiveEditor(editor: vscode.TextEditor){
+        this.guides.setNeedsUpdateEditor(editor);
     }
 
     private updateEditors(){
@@ -47,7 +55,7 @@ class Guides {
     private normalGuideBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion: boolean = false;
-    private configurations: any;
+    private configurations: vscode.WorkspaceConfiguration;
 
     private timerDelay: number = 0.1;
     private updateTimer: number = null;
@@ -75,7 +83,9 @@ class Guides {
         this.configurations = vscode.workspace.getConfiguration("guides");
 
         this.normalGuideBackgroundDecors = [];
-        this.configurations.normal.backgrounds.forEach((backgroundColor) => {
+        this.configurations.get<any>(
+            "normal.backgrounds"
+        ).forEach((backgroundColor) => {
             this.normalGuideBackgroundDecors.push(
                 vscode.window.createTextEditorDecorationType({
                     backgroundColor: backgroundColor
@@ -83,14 +93,14 @@ class Guides {
             );
         });
         this.normalGuideDecor = vscode.window.createTextEditorDecorationType({
-            outlineWidth: this.configurations.normal.width,
-            outlineColor: this.configurations.normal.color,
-            outlineStyle: this.configurations.normal.style
+            outlineWidth: this.configurations.get<string>("normal.width"),
+            outlineColor: this.configurations.get<string>("normal.color"),
+            outlineStyle: this.configurations.get<string>("normal.style")
         });
         this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
-            outlineWidth: this.configurations.ruler.width,
-            outlineColor: this.configurations.ruler.color,
-            outlineStyle: this.configurations.ruler.style
+            outlineWidth: this.configurations.get<string>("ruler.width"),
+            outlineColor: this.configurations.get<string>("ruler.color"),
+            outlineStyle: this.configurations.get<string>("ruler.style")
         });
     }
 
@@ -167,13 +177,14 @@ class Guides {
                         guideline.type === "normal" &&
                         (!inSelection || (
                             inSelection &&
-                            !this.configurations.normal.hideOnSelection
+                            !this.configurations.get<boolean>("normal.hideOnSelection")
                         ))
                     ){
                         normalRanges.push(new vscode.Range(position, position));
                     }
                 }else if(guideline.type === "ruler"){
                     if(
+                        !this.configurations.get<boolean>("overrideDefault") &&
                         !this.hasShowSuggestion &&
                         this.isEqualOrNewerVersionThan(0, 10, 10)
                     ){
@@ -188,7 +199,7 @@ class Guides {
                     if(
                         !inSelection || (
                             inSelection &&
-                            !this.configurations.ruler.hideOnSelection
+                            !this.configurations.get<boolean>("ruler.hideOnSelection")
                         )
                     ){
                         rulerRanges.push(new vscode.Range(position, position));
@@ -238,7 +249,7 @@ class Guides {
         );
         var singleMatch = whitespaces.match(pattern);
 
-        this.configurations.rulers.forEach((stop) => {
+        this.configurations.get<Array<number>>("rulers").forEach((stop) => {
             var sourceIndex = 0;
             var index = 0;
             if(stop < line.text.replace(pattern, emptySpace).length){

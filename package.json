@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
@@ -97,6 +97,11 @@
                     "default": 0.1,
                     "description": "Time duration between each guide lines update (in seconds).",
                     "minimum": 0.01
+                },
+                "guides.overrideDefault": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Override default Visual Studio Code behaviours (such as indentation guides or rulers)."
                 }
             }
         }
