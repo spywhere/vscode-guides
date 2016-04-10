@@ -33,11 +33,7 @@ class GuidesController {
     }
 
     private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
-        if(event.selections.some((selection) => {
-            return !selection.isEmpty;
-        })){
-            this.guides.setNeedsUpdateEditor(event.textEditor);
-        }
+        this.guides.setNeedsUpdateEditor(event.textEditor);
     }
 
     private updateActiveEditor(editor: vscode.TextEditor){
