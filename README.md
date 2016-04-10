@@ -15,10 +15,13 @@ Simply install the extension, Guides should do it job right away (after restart)
 ```
 //-------- Guides Configurations --------
 
-// Normal indentation background colors. This settings may cause slow performance on multiple indentations.
+// Indentation background colors. This settings may cause slow performance on multiple indentations.
 //   Each color will be used for each indentation level and will loop around itself.
 //   Values must be in "rgba(red, green, blue, alpha)" format.
-"guides.normal.backgrounds": [],
+"guides.indent.backgrounds": [],
+
+// Hide indentation background in selections.
+"guides.indent.hideBackgroundOnSelection": true,
 
 // Normal indentation guides rendering width.
 "guides.normal.width": "1px",
@@ -31,6 +34,21 @@ Simply install the extension, Guides should do it job right away (after restart)
 
 // Hide normal indentation guides in selections.
 "guides.normal.hideOnSelection": true,
+
+// Enable active indentation guides in addition to normal indentation guides.
+"guides.active.enabled": true,
+
+// Active indentation guides rendering width.
+"guides.active.width": "1px",
+
+// Active indentation guides rendering color.
+"guides.active.color": "rgba(120, 60, 60, 0.75)",
+
+// Active indentation guides rendering style.
+"guides.active.style": "solid",
+
+// Hide active indentation guides in selections.
+"guides.active.hideOnSelection": true,
 
 // Ruler guide stop points.
 "guides.rulers": [],

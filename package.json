@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.1.3",
+    "version": "0.2.0",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
@@ -28,14 +28,20 @@
             "type": "object",
             "title": "Guides Configurations",
             "properties": {
-                "guides.normal.backgrounds": {
+                "guides.indent.backgrounds": {
                     "type": "array",
                     "default": [],
                     "items": {
                         "type": "string",
                         "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
                     },
-                    "description": "Normal indentation background colors."
+                    "description": "Indentation background colors."
+                },
+                "guides.indent.hideBackgroundOnSelection": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Hide indentation background in selections.",
+                    "enum": [true, false]
                 },
                 "guides.normal.width": {
                     "type": "string",
@@ -60,6 +66,37 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Hide normal indentation guides in selections.",
+                    "enum": [true, false]
+                },
+                "guides.active.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable active indentation guides in addition to normal indentation guides.",
+                    "enum": [true, false]
+                },
+                "guides.active.width": {
+                    "type": "string",
+                    "default": "1px",
+                    "description": "Active indentation guides rendering width."
+                },
+                "guides.active.color": {
+                    "type": "string",
+                    "default": "rgba(120, 60, 60, 0.75)",
+                    "description": "Active indentation guides rendering color."
+                },
+                "guides.active.style": {
+                    "type": "string",
+                    "default": "solid",
+                    "description": "Active indentation guides rendering style.",
+                    "enum": [
+                        "none", "dotted", "dashed", "solid", "double",
+                        "groove", "ridge", "inset", "outset"
+                    ]
+                },
+                "guides.active.hideOnSelection": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Hide active indentation guides in selections.",
                     "enum": [true, false]
                 },
                 "guides.rulers": {
