@@ -176,7 +176,7 @@ class Guides {
         var maxLevel = this.indentBackgroundDecors.length;
 
         var cursorPosition = editor.selection.active;
-        var primaryRanges = this.updateLine(
+        var primaryRanges = this.getRangesForLine(
             editor, cursorPosition.line, maxLevel
         );
         var stillActive = (
@@ -209,7 +209,7 @@ class Guides {
 
         // Search through upper ranges
         for(var line = cursorPosition.line - 1; line >= 0; line--){
-            var ranges = this.updateLine(
+            var ranges = this.getRangesForLine(
                 editor, line, maxLevel, primaryRanges.activeLevel
             );
             indentGuideRanges.push(
@@ -228,7 +228,7 @@ class Guides {
                         ranges.activeGuideRange
                     );
                 }
-            }else{
+            }else if(primaryRanges.activeLevel !== ranges.activeLevel){
                 stillActive = false;
             }
             rulerRanges.push(
@@ -246,7 +246,7 @@ class Guides {
         );
         var totalLines = editor.document.lineCount;
         for(var line = cursorPosition.line + 1; line < totalLines; line++){
-            var ranges = this.updateLine(
+            var ranges = this.getRangesForLine(
                 editor, line, maxLevel, primaryRanges.activeLevel
             );
             indentGuideRanges.push(
@@ -265,7 +265,7 @@ class Guides {
                         ranges.activeGuideRange
                     );
                 }
-            }else{
+            }else if(primaryRanges.activeLevel !== ranges.activeLevel){
                 stillActive = false;
             }
             rulerRanges.push(
@@ -289,8 +289,8 @@ class Guides {
         editor.setDecorations(this.rulerGuideDecor, rulerRanges);
     }
 
-    updateLine(editor: vscode.TextEditor, lineNumber: number, maxLevel: number,
-               activeLevel: number = -1){
+    getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
+                     maxLevel: number, activeLevel: number = -1){
         var activeGuideRange: vscode.Range = null;
         var indentGuideRanges: vscode.Range[] = [];
         var indentBackgrounds: any[] = [];
@@ -385,6 +385,11 @@ class Guides {
             }
             lastPosition = position;
         });
+
+        if(guidelines.length !== 0 && activeGuideRange === null){
+            activeLevel = -1;
+        }
+
         return {
             indentGuideRanges: indentGuideRanges,
             indentBackgrounds: indentBackgrounds,
@@ -402,10 +407,7 @@ class Guides {
             ` {${indentSize}}| {0,${indentSize - 1}}\t`,
             "g"
         );
-        var emptySpace = "";
-        for(var i=0; i < indentSize; i++){
-            emptySpace += " ";
-        }
+        var emptySpace = " ".repeat(indentSize);
         var guides = [];
         var whitespaces = line.text.substr(
             0, line.firstNonWhitespaceCharacterIndex
