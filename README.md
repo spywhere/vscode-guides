@@ -23,6 +23,9 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Hide indentation background in selections.
 "guides.indent.hideBackgroundOnSelection": true,
 
+// Show start-of-line indentation guides.
+"guides.indent.showFirstIndentGuides": true,
+
 // Normal indentation guides rendering width.
 "guides.normal.width": "1px",
 

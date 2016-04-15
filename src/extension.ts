@@ -182,6 +182,7 @@ class Guides {
         var stillActive = (
             primaryRanges.activeGuideRange !== null &&
             editor.selection.isEmpty &&
+            editor.selections.length == 1 &&
             this.configurations.get<boolean>(
                 "active.enabled"
             )
@@ -240,6 +241,7 @@ class Guides {
         stillActive = (
             primaryRanges.activeGuideRange !== null &&
             editor.selection.isEmpty &&
+            editor.selections.length == 1 &&
             this.configurations.get<boolean>(
                 "active.enabled"
             )
@@ -299,6 +301,10 @@ class Guides {
         var guidelines = this.getGuides(
             editor.document.lineAt(lineNumber), editor.options.tabSize
         );
+        var empty = guidelines === null;
+        if(empty){
+            guidelines = [];
+        }
         if(activeLevel === -1){
             for (var index = guidelines.length - 1; index >= 0; index--) {
                 var guide = guidelines[index];
@@ -315,12 +321,8 @@ class Guides {
         var lastPosition = new vscode.Position(lineNumber, 0);
         guidelines.forEach((guideline, level) => {
             var position = new vscode.Position(lineNumber, guideline.position);
-            var inSelection = false;
-            editor.selections.forEach((selection) => {
-                if(selection.contains(position)){
-                    inSelection = true;
-                    return;
-                }
+            var inSelection = editor.selections.some((selection) => {
+                return selection.contains(position);
             });
             if(guideline.type === "normal" || guideline.type === "extra"){
                 // Add background color stop points if there are colors
@@ -386,7 +388,7 @@ class Guides {
             lastPosition = position;
         });
 
-        if(guidelines.length !== 0 && activeGuideRange === null){
+        if(!empty && activeGuideRange === null){
             activeLevel = -1;
         }
 
@@ -401,7 +403,7 @@ class Guides {
 
     getGuides(line: vscode.TextLine, indentSize: number){
         if(line.isEmptyOrWhitespace){
-            return [];
+            return null;
         }
         var pattern = new RegExp(
             ` {${indentSize}}| {0,${indentSize - 1}}\t`,
@@ -435,6 +437,17 @@ class Guides {
             return guides;
         }
         var index = 0;
+        if(
+            index !== line.firstNonWhitespaceCharacterIndex &&
+            this.configurations.get<boolean>(
+                "indent.showFirstIndentGuides"
+            )
+        ){
+            guides.push({
+                type: "normal",
+                position: index
+            });
+        }
         for(
             var indentLevel=0;
             indentLevel < singleMatch.length;
