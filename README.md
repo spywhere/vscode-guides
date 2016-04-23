@@ -1,10 +1,21 @@
 ## Guides
+![Version](http://vsmarketplacebadge.apphb.com/version/spywhere.guides.svg)
+![Installs](http://vsmarketplacebadge.apphb.com/installs/spywhere.guides.svg)
+
 A Visual Studio Code extension for more guide lines
 
 ![Screenshot](images/screenshot.png)
 
 ### What is Guides?
 Guides is simply an extension that add indentation guide lines and your own ruler guide lines.
+
+### How Guides different from built-in indentation guides?
+- Active indentation guides
+- Indentation backgrounds
+- Color and style customizations
+- Hide on selection
+
+If you just want simple indentation guides, Guides kindly recommended that you use built-in indentation guides instead.
 
 ### How it works?
 Simply install the extension, Guides should do it job right away (after restart)!
