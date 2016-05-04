@@ -2,7 +2,7 @@
     "name": "guides",
     "displayName": "Guides",
     "description": "An extension for more guide lines",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "publisher": "spywhere",
     "icon": "images/icon.png",
     "bugs": {
@@ -50,8 +50,8 @@
                     "enum": [true, false]
                 },
                 "guides.normal.width": {
-                    "type": "string",
-                    "default": "1px",
+                    "type": "number",
+                    "default": 1,
                     "description": "Normal indentation guides rendering width."
                 },
                 "guides.normal.color": {
@@ -81,8 +81,8 @@
                     "enum": [true, false]
                 },
                 "guides.active.width": {
-                    "type": "string",
-                    "default": "1px",
+                    "type": "number",
+                    "default": 1,
                     "description": "Active indentation guides rendering width."
                 },
                 "guides.active.color": {
@@ -111,8 +111,8 @@
                     "description": "Ruler guide stop points."
                 },
                 "guides.ruler.width": {
-                    "type": "string",
-                    "default": "1px",
+                    "type": "number",
+                    "default": 1,
                     "description": "Ruler guides rendering width."
                 },
                 "guides.ruler.color": {

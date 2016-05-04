@@ -52,7 +52,10 @@ class Guides {
     private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion = false;
-    private hasWarnDeprecate = false;
+    private hasWarnDeprecate = {
+        "background": false,
+        "width": false
+    };
 
     private configurations: vscode.WorkspaceConfiguration;
 
@@ -88,9 +91,9 @@ class Guides {
         this.indentBackgroundDecors = [];
         if(
             this.configurations.has("normal.backgrounds") &&
-            !this.hasWarnDeprecate
+            !this.hasWarnDeprecate["background"]
         ){
-            this.hasWarnDeprecate = true;
+            this.hasWarnDeprecate["background"] = true;
             vscode.window.showWarningMessage(
                 "Guides extension has detected that you are still using " +
                 "\"guides.normal.backgrounds\" settings. " +
@@ -110,21 +113,55 @@ class Guides {
                 })
             );
         });
+
+        [
+            "normal.width", "active.width", "ruler.width"
+        ].some((settingKey) => {
+            var hasWarn = this.hasWarnDeprecate["width"];
+            var isString = typeof(
+                this.configurations.get<any>(settingKey)
+            ) === "string";
+            if(isString && !hasWarn){
+                this.hasWarnDeprecate["width"] = true;
+                vscode.window.showWarningMessage(
+                    "Guides extension has detected that you are still using " +
+                    `\"guides.${settingKey}\" as a string. ` +
+                    "Please change the setting's value to "+
+                    "number instead."
+                );
+            }
+            return !isString || hasWarn;
+        });
+
         this.indentGuideDecor = vscode.window.createTextEditorDecorationType({
-            outlineWidth: this.configurations.get<string>("normal.width"),
-            outlineColor: this.configurations.get<string>("normal.color"),
-            outlineStyle: this.configurations.get<string>("normal.style")
+            borderWidth: `0px 0px 0px ${
+                this.getValueAsNumber("normal.width")
+            }px`,
+            borderColor: this.configurations.get<string>("normal.color"),
+            borderStyle: this.configurations.get<string>("normal.style")
         });
         this.activeGuideDecor = vscode.window.createTextEditorDecorationType({
-            outlineWidth: this.configurations.get<string>("active.width"),
-            outlineColor: this.configurations.get<string>("active.color"),
-            outlineStyle: this.configurations.get<string>("active.style")
+            borderWidth: `0px 0px 0px ${
+                this.getValueAsNumber("active.width")
+            }px`,
+            borderColor: this.configurations.get<string>("active.color"),
+            borderStyle: this.configurations.get<string>("active.style")
         });
         this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
-            outlineWidth: this.configurations.get<string>("ruler.width"),
-            outlineColor: this.configurations.get<string>("ruler.color"),
-            outlineStyle: this.configurations.get<string>("ruler.style")
+            borderWidth: `0px 0px 0px ${
+                this.getValueAsNumber("ruler.width")
+            }px`,
+            borderColor: this.configurations.get<string>("ruler.color"),
+            borderStyle: this.configurations.get<string>("ruler.style")
         });
+    }
+
+    getValueAsNumber(settingKey){
+        var value = this.configurations.get<any>(settingKey);
+        if(typeof(value) !== "number"){
+            value = parseInt(value);
+        }
+        return value;
     }
 
     clearEditorsDecorations(){

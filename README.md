@@ -38,7 +38,7 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.indent.showFirstIndentGuides": true,
 
 // Normal indentation guides rendering width.
-"guides.normal.width": "1px",
+"guides.normal.width": 1,
 
 // Normal indentation guides rendering color.
 "guides.normal.color": "rgba(60, 60, 60, 0.75)",
@@ -53,7 +53,7 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.active.enabled": true,
 
 // Active indentation guides rendering width.
-"guides.active.width": "1px",
+"guides.active.width": 1,
 
 // Active indentation guides rendering color.
 "guides.active.color": "rgba(120, 60, 60, 0.75)",
@@ -68,7 +68,7 @@ Simply install the extension, Guides should do it job right away (after restart)
 "guides.rulers": [],
 
 // Ruler guides rendering width.
-"guides.ruler.width": "1px",
+"guides.ruler.width": 1,
 
 // Ruler guides rendering color.
 "guides.ruler.color": "#cc9999",
@@ -88,5 +88,11 @@ Simply install the extension, Guides should do it job right away (after restart)
 ```
 Possible values can be access via auto-completion dialog.
 
-### License?
-MIT
+### FAQs
+
+**Q:** Why guide lines show fragmented on empty lines?  
+**A:** Guides use border to draw its guide lines which required the character to be there.
+Since Visual Studio Code API does not provide the API for drawing line on empty space, this can be expected. 
+
+**Q:** License?  
+**A:** MIT
