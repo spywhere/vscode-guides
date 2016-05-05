@@ -13,7 +13,7 @@ class GuidesController {
     constructor(guides: Guides){
         this.guides = guides;
         this.guides.reset();
-
+        
         let subscriptions: vscode.Disposable[] = [];
         vscode.window.onDidChangeTextEditorSelection(
             this.updateSelection, this, subscriptions
@@ -51,7 +51,10 @@ class Guides {
     private rulerGuideDecor: vscode.TextEditorDecorationType;
     private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
-    private hasShowSuggestion = false;
+    private hasShowSuggestion = {
+        "ruler": false,
+        "guide": false
+    };
     private hasWarnDeprecate = {
         "background": false,
         "width": false
@@ -86,6 +89,24 @@ class Guides {
 
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
+
+        var overrideStyle = !this.configurations.get<boolean>(
+            "overrideDefault"
+        ) && vscode.workspace.getConfiguration("editor").get<boolean>(
+            "indentGuides", false
+        ) && this.isEqualOrNewerVersionThan(1, 1, 0);
+        if(
+            overrideStyle &&
+            !this.hasShowSuggestion["guide"]
+        ){
+            this.hasShowSuggestion["guide"] = true;
+            vscode.window.showWarningMessage(
+                "Guides extension has detected that you are using " +
+                "\"editor.indentGuides\" settings. " +
+                "Guides will now disable all indentation guides by "+
+                "override the style to \"none\"."
+            );
+        }
 
         this.timerDelay = this.configurations.get<number>("updateDelay");
         this.indentBackgroundDecors = [];
@@ -138,21 +159,37 @@ class Guides {
                 this.getValueAsNumber("normal.width")
             }px`,
             borderColor: this.configurations.get<string>("normal.color"),
-            borderStyle: this.configurations.get<string>("normal.style")
+            borderStyle: this.configurations.get<string>("normal.style").trim()
         });
+        if(
+            overrideStyle ||
+            this.configurations.get<string>(
+                "normal.style"
+            ).trim().toLowerCase() === "none"
+        ){
+            this.indentGuideDecor = null;
+        }
         this.activeGuideDecor = vscode.window.createTextEditorDecorationType({
             borderWidth: `0px 0px 0px ${
                 this.getValueAsNumber("active.width")
             }px`,
             borderColor: this.configurations.get<string>("active.color"),
-            borderStyle: this.configurations.get<string>("active.style")
+            borderStyle: this.configurations.get<string>("active.style").trim()
         });
+        if(
+            overrideStyle ||
+            this.configurations.get<string>(
+                "active.style"
+            ).trim().toLowerCase() === "none"
+        ){
+            this.indentGuideDecor = null;
+        }
         this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
             borderWidth: `0px 0px 0px ${
                 this.getValueAsNumber("ruler.width")
             }px`,
             borderColor: this.configurations.get<string>("ruler.color"),
-            borderStyle: this.configurations.get<string>("ruler.style")
+            borderStyle: this.configurations.get<string>("ruler.style").trim()
         });
     }
 
@@ -323,8 +360,12 @@ class Guides {
                 return stopPoint.range;
             }));
         });
-        editor.setDecorations(this.indentGuideDecor, indentGuideRanges);
-        editor.setDecorations(this.activeGuideDecor, activeGuideRanges);
+        if(this.indentGuideDecor){
+            editor.setDecorations(this.indentGuideDecor, indentGuideRanges);
+        }
+        if(this.activeGuideDecor){
+            editor.setDecorations(this.activeGuideDecor, activeGuideRanges);
+        }
         editor.setDecorations(this.rulerGuideDecor, rulerRanges);
     }
 
@@ -400,10 +441,10 @@ class Guides {
             }else if(guideline.type === "ruler"){
                 if(
                     !this.configurations.get<boolean>("overrideDefault") &&
-                    !this.hasShowSuggestion &&
+                    !this.hasShowSuggestion["ruler"] &&
                     this.isEqualOrNewerVersionThan(0, 10, 10)
                 ){
-                    this.hasShowSuggestion = true;
+                    this.hasShowSuggestion["ruler"] = true;
                     vscode.window.showInformationMessage(
                         "Visual Studio Code has built-in ruler" +
                         " feature. Guides extension kindly " +
@@ -503,7 +544,9 @@ class Guides {
 
     isEqualOrNewerVersionThan(major: number, minor: number, patch: number){
         var targetVersions = [major, minor, patch];
-        var currentVersions = vscode.version.split(".").map((value)=>{
+        var currentVersions = vscode.version.match(
+            "\\d+\\.\\d+\\.\\d+"
+        )[0].split(".").map((value)=>{
             return parseInt(value);
         });
         for (var index = 0; index < targetVersions.length; index++) {
