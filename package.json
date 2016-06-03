@@ -1,160 +1,207 @@
 {
-    "name": "guides",
-    "displayName": "Guides",
-    "description": "An extension for more guide lines",
-    "version": "0.3.1",
-    "publisher": "spywhere",
-    "icon": "images/icon.png",
-    "bugs": {
-        "url": "https://github.com/spywhere/vscode-guides/issues"
-    },
-    "homepage": "https://github.com/spywhere/vscode-guides/blob/master/README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/spywhere/vscode-guides.git"
-    },
-    "engines": {
-        "vscode": "^0.10.1"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Guides Configurations",
-            "properties": {
-                "guides.indent.backgrounds": {
-                    "type": "array",
-                    "default": [],
-                    "items": {
-                        "type": "string",
-                        "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
-                    },
-                    "description": "Indentation background colors."
-                },
-                "guides.indent.hideBackgroundOnSelection": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide indentation background in selections.",
-                    "enum": [true, false]
-                },
-                "guides.indent.showFirstIndentGuides": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show start-of-line indentation guides.",
-                    "enum": [true, false]
-                },
-                "guides.normal.width": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "Normal indentation guides rendering width."
-                },
-                "guides.normal.color": {
-                    "type": "string",
-                    "default": "rgba(60, 60, 60, 0.75)",
-                    "description": "Normal indentation guides rendering color."
-                },
-                "guides.normal.style": {
-                    "type": "string",
-                    "default": "solid",
-                    "description": "Normal indentation guides rendering style.",
-                    "enum": [
-                        "none", "dotted", "dashed", "solid", "double",
-                        "groove", "ridge", "inset", "outset"
-                    ]
-                },
-                "guides.normal.hideOnSelection": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide normal indentation guides in selections.",
-                    "enum": [true, false]
-                },
-                "guides.active.enabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Enable active indentation guides in addition to normal indentation guides.",
-                    "enum": [true, false]
-                },
-                "guides.active.width": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "Active indentation guides rendering width."
-                },
-                "guides.active.color": {
-                    "type": "string",
-                    "default": "rgba(120, 60, 60, 0.75)",
-                    "description": "Active indentation guides rendering color."
-                },
-                "guides.active.style": {
-                    "type": "string",
-                    "default": "solid",
-                    "description": "Active indentation guides rendering style.",
-                    "enum": [
-                        "none", "dotted", "dashed", "solid", "double",
-                        "groove", "ridge", "inset", "outset"
-                    ]
-                },
-                "guides.active.hideOnSelection": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide active indentation guides in selections.",
-                    "enum": [true, false]
-                },
-                "guides.rulers": {
-                    "type": "array",
-                    "default": [],
-                    "description": "Ruler guide stop points."
-                },
-                "guides.ruler.width": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "Ruler guides rendering width."
-                },
-                "guides.ruler.color": {
-                    "type": "string",
-                    "default": "#cc9999",
-                    "description": "Ruler guides rendering color."
-                },
-                "guides.ruler.style": {
-                    "type": "string",
-                    "default": "solid",
-                    "description": "Ruler guides rendering style.",
-                    "enum": [
-                        "none", "dotted", "dashed", "solid", "double",
-                        "groove", "ridge", "inset", "outset"
-                    ]
-                },
-                "guides.ruler.hideOnSelection": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide ruler guides in selections.",
-                    "enum": [true, false]
-                },
-                "guides.updateDelay": {
-                    "type": "number",
-                    "default": 0.1,
-                    "description": "Time duration between each guide lines update (in seconds).",
-                    "minimum": 0.01
-                },
-                "guides.overrideDefault": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Override default Visual Studio Code behaviours (such as indentation guides or rulers)."
-                }
-            }
+  "name": "guides",
+  "displayName": "Guides",
+  "description": "An extension for more guide lines",
+  "version": "0.4.0",
+  "publisher": "spywhere",
+  "icon": "images/icon.png",
+  "bugs": {
+    "url": "https://github.com/spywhere/vscode-guides/issues"
+  },
+  "homepage": "https://github.com/spywhere/vscode-guides/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spywhere/vscode-guides.git"
+  },
+  "engines": {
+    "vscode": "^0.10.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Guides Configurations",
+      "properties": {
+        "guides.indent.backgrounds": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
+          },
+          "description": "Indentation background colors."
+        },
+        "guides.indent.hideBackgroundOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide indentation background in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.indent.showFirstIndentGuides": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show start-of-line indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.normal.width": {
+          "type": "number",
+          "default": 1,
+          "description": "Normal indentation guides rendering width."
+        },
+        "guides.normal.color": {
+          "type": "string",
+          "default": "rgba(60, 60, 60, 0.75)",
+          "description": "Normal indentation guides rendering color."
+        },
+        "guides.normal.style": {
+          "type": "string",
+          "default": "solid",
+          "description": "Normal indentation guides rendering style.",
+          "enum": [
+            "none",
+            "dotted",
+            "dashed",
+            "solid",
+            "double",
+            "groove",
+            "ridge",
+            "inset",
+            "outset"
+          ]
+        },
+        "guides.normal.hideOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide normal indentation guides in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.active.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable active indentation guides in addition to normal indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.active.width": {
+          "type": "number",
+          "default": 1,
+          "description": "Active indentation guides rendering width."
+        },
+        "guides.active.color": {
+          "type": "string",
+          "default": "rgba(120, 60, 60, 0.75)",
+          "description": "Active indentation guides rendering color."
+        },
+        "guides.active.style": {
+          "type": "string",
+          "default": "solid",
+          "description": "Active indentation guides rendering style.",
+          "enum": [
+            "none",
+            "dotted",
+            "dashed",
+            "solid",
+            "double",
+            "groove",
+            "ridge",
+            "inset",
+            "outset"
+          ]
+        },
+        "guides.active.hideOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide active indentation guides in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.rulers": {
+          "type": "array",
+          "default": [],
+          "description": "Ruler guide stop points."
+        },
+        "guides.ruler.width": {
+          "type": "number",
+          "default": 1,
+          "description": "Ruler guides rendering width."
+        },
+        "guides.ruler.color": {
+          "type": "string",
+          "default": "#cc9999",
+          "description": "Ruler guides rendering color."
+        },
+        "guides.ruler.style": {
+          "type": "string",
+          "default": "solid",
+          "description": "Ruler guides rendering style.",
+          "enum": [
+            "none",
+            "dotted",
+            "dashed",
+            "solid",
+            "double",
+            "groove",
+            "ridge",
+            "inset",
+            "outset"
+          ]
+        },
+        "guides.ruler.hideOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide ruler guides in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.updateDelay": {
+          "type": "number",
+          "default": 0.1,
+          "description": "Time duration between each guide lines update (in seconds).",
+          "minimum": 0.01
+        },
+        "guides.overrideDefault": {
+          "type": "boolean",
+          "default": false,
+          "description": "Override default Visual Studio Code behaviours (such as indentation guides or rulers)."
+        },
+        "guides.sendUsagesAndStats": {
+          "type": "boolean",
+          "default": true,
+          "description": "Send anonymous usage statistics data to the developer."
         }
-    },
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
-    },
-    "devDependencies": {
-        "typescript": "^1.6.2",
-        "vscode": "0.10.x"
+      }
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+  },
+  "devDependencies": {
+    "typescript": "^1.6.2",
+    "vscode": "0.10.x"
+  },
+  "dependencies": {
+    "request": "^2.72.0"
+  }
 }

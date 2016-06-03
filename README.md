@@ -85,6 +85,9 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Override default Visual Studio Code behaviours.
 //   Set to "true" to suppress any suggestion towards default Visual Studio Code behaviours.
 "guides.overrideDefault": false,
+
+// Send anonymous usage statistics data to the developer.
+"guides.sendUsagesAndStats": true,
 ```
 Possible values can be access via auto-completion dialog.
 

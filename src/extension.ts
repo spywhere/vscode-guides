@@ -1,4 +1,7 @@
 import * as vscode from 'vscode';
+var process = require("process");
+var request = require("request");
+var querystring = require("querystring");
 
 export function activate(context: vscode.ExtensionContext) {
     var guides = new Guides();
@@ -13,13 +16,16 @@ class GuidesController {
     constructor(guides: Guides){
         this.guides = guides;
         this.guides.reset();
-        
+
         let subscriptions: vscode.Disposable[] = [];
         vscode.window.onDidChangeTextEditorSelection(
             this.updateSelection, this, subscriptions
         );
         vscode.window.onDidChangeActiveTextEditor(
             this.updateActiveEditor, this, subscriptions
+        );
+        vscode.window.onDidChangeTextEditorOptions(
+            this.updateEditorSettings, this, subscriptions
         );
         vscode.workspace.onDidChangeConfiguration(
             this.updateEditors, this, subscriptions
@@ -33,6 +39,10 @@ class GuidesController {
     }
 
     private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
+        this.guides.setNeedsUpdateEditor(event.textEditor);
+    }
+
+    private updateEditorSettings(event: vscode.TextEditorOptionsChangeEvent){
         this.guides.setNeedsUpdateEditor(event.textEditor);
     }
 
@@ -62,8 +72,10 @@ class Guides {
 
     private configurations: vscode.WorkspaceConfiguration;
 
+    private startupTimer = Date.now();
     private timerDelay = 0.1;
     private updateTimer: number = null;
+    private sendStats = false;
 
     reset(){
         this.clearEditorsDecorations();
@@ -90,11 +102,13 @@ class Guides {
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
 
+        this.sendStats = !this.configurations.get<boolean>("sendUsagesAndStats");
+
         var overrideStyle = !this.configurations.get<boolean>(
             "overrideDefault"
         ) && vscode.workspace.getConfiguration("editor").get<boolean>(
             "indentGuides", false
-        ) && this.isEqualOrNewerVersionThan(1, 1, 0);
+        ) && this.isEqualOrNewerVersionThan(1, 0, 1);
         if(
             overrideStyle &&
             !this.hasShowSuggestion["guide"]
@@ -237,6 +251,10 @@ class Guides {
     }
 
     updateEditor(editor: vscode.TextEditor){
+        if(!this.sendStats){
+            this.sendStats = true;
+            this.sendUsagesAndStats();
+        }
         // If no editor set, do nothing
         //   This can occur when active editor is not set
         if(!editor){
@@ -540,6 +558,53 @@ class Guides {
             });
         }
         return guides;
+    }
+
+    sendUsagesAndStats(){
+        // Want to see this data?
+        //   There! http://stats.digitalparticle.com/
+        console.log("[Guides] Sending usage statistics...");
+        var startupTime = (Date.now() - this.startupTimer) / 1000.0;
+        var data = querystring.stringify({
+            "name": "guides",
+            "schema": "0.1",
+            "version": vscode.extensions.getExtension(
+                "spywhere.guides"
+            ).packageJSON["version"],
+            "vscode_version": vscode.version,
+            "platform": process.platform,
+            "architecture": process.arch,
+            "startup_time": startupTime.toFixed(3) + "s"
+        });
+
+        request(
+            "http://api.digitalparticle.com/1/stats?" + data,
+            (error, response, data) => {
+                if(error){
+                    this.sendStats = false;
+                    console.log(
+                        "[Guides] Error while sending usage statistics: " +
+                        error
+                    );
+                }else if(response.statusCode != 200){
+                    this.sendStats = false;
+                    console.log(
+                        "[Guides] Error while sending usage statistics: " +
+                        "ErrorCode " + response.statusCode
+                    );
+                }else if(data.toLowerCase() !== "finished"){
+                    this.sendStats = false;
+                    console.log(
+                        "[Guides] Error while sending usage statistics: " +
+                        data
+                    );
+                }else{
+                    console.log(
+                        "[Guides] Usage statistics has successfully sent"
+                    );
+                }
+            }
+        );
     }
 
     isEqualOrNewerVersionThan(major: number, minor: number, patch: number){
