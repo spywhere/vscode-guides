@@ -73,6 +73,7 @@ class Guides {
     private configurations: vscode.WorkspaceConfiguration;
 
     private startupTimer = Date.now();
+    private startupStop = null;
     private timerDelay = 0.1;
     private updateTimer: number = null;
     private sendStats = false;
@@ -564,7 +565,10 @@ class Guides {
         // Want to see this data?
         //   There! http://stats.digitalparticle.com/
         console.log("[Guides] Sending usage statistics...");
-        var startupTime = (Date.now() - this.startupTimer) / 1000.0;
+        if(this.startupStop === null){
+            this.startupStop = Date.now();
+        }
+        var startupTime = (this.startupStop - this.startupTimer) / 1000.0;
         var data = querystring.stringify({
             "name": "guides",
             "schema": "0.1",
