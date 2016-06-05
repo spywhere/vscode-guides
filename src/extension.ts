@@ -197,7 +197,7 @@ class Guides {
                 "active.style"
             ).trim().toLowerCase() === "none"
         ){
-            this.indentGuideDecor = null;
+            this.activeGuideDecor = null;
         }
         this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
             borderWidth: `0px 0px 0px ${
@@ -402,20 +402,26 @@ class Guides {
         if(empty){
             guidelines = [];
         }
+        var totalNonNormalGuides = 0;
         if(activeLevel === -1){
             for (var index = guidelines.length - 1; index >= 0; index--) {
                 var guide = guidelines[index];
                 if(guide.type === "normal"){
                     activeLevel = index;
                     break;
+                }else{
+                    totalNonNormalGuides += 1;
                 }
             }
             if(activeLevel < 0){
                 activeLevel = -2;
+            }else{
+                activeLevel += totalNonNormalGuides;
             }
         }
 
         var lastPosition = new vscode.Position(lineNumber, 0);
+        var normalGuideIndex = 0;
         guidelines.forEach((guideline, level) => {
             var position = new vscode.Position(lineNumber, guideline.position);
             var inSelection = editor.selections.some((selection) => {
@@ -437,7 +443,8 @@ class Guides {
                     });
                 }
                 if(guideline.type === "normal"){
-                    if(level === activeLevel && (
+                    normalGuideIndex += 1;
+                    if(normalGuideIndex === activeLevel && (
                         !inSelection || (inSelection &&
                             !this.configurations.get<boolean>(
                                 "active.hideOnSelection"
@@ -445,7 +452,7 @@ class Guides {
                         )
                     )){
                         activeGuideRange = new vscode.Range(position, position);
-                    }else if(level !== activeLevel && (
+                    }else if(normalGuideIndex !== activeLevel && (
                         !inSelection || (inSelection &&
                             !this.configurations.get<boolean>(
                                 "normal.hideOnSelection"
@@ -533,18 +540,17 @@ class Guides {
         if(!singleMatch || singleMatch.length == 0){
             return guides;
         }
-        var index = 0;
         if(
-            index !== line.firstNonWhitespaceCharacterIndex &&
             this.configurations.get<boolean>(
                 "indent.showFirstIndentGuides"
             )
         ){
             guides.push({
                 type: "normal",
-                position: index
+                position: 0
             });
         }
+        var index = 0;
         for(
             var indentLevel=0;
             indentLevel < singleMatch.length;
