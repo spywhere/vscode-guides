@@ -1,6 +1,6 @@
 ## Guides
-![Version](http://vsmarketplacebadge.apphb.com/version/spywhere.guides.svg)
-![Installs](http://vsmarketplacebadge.apphb.com/installs/spywhere.guides.svg)
+[![Version](http://vsmarketplacebadge.apphb.com/version/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
+[![Installs](http://vsmarketplacebadge.apphb.com/installs/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
 
 A Visual Studio Code extension for more guide lines
 
