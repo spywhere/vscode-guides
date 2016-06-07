@@ -58,6 +58,7 @@ class GuidesController {
 class Guides {
     private indentGuideDecor: vscode.TextEditorDecorationType;
     private activeGuideDecor: vscode.TextEditorDecorationType;
+    private stackGuideDecor: vscode.TextEditorDecorationType;
     private rulerGuideDecor: vscode.TextEditorDecorationType;
     private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
@@ -94,6 +95,9 @@ class Guides {
         }
         if(this.activeGuideDecor){
             this.activeGuideDecor.dispose();
+        }
+        if(this.stackGuideDecor){
+            this.stackGuideDecor.dispose();
         }
         if(this.rulerGuideDecor){
             this.rulerGuideDecor.dispose();
@@ -199,6 +203,21 @@ class Guides {
         ){
             this.activeGuideDecor = null;
         }
+        this.stackGuideDecor = vscode.window.createTextEditorDecorationType({
+            borderWidth: `0px 0px 0px ${
+                this.getValueAsNumber("stack.width")
+            }px`,
+            borderColor: this.configurations.get<string>("stack.color"),
+            borderStyle: this.configurations.get<string>("stack.style").trim()
+        });
+        if(
+            overrideStyle ||
+            this.configurations.get<string>(
+                "stack.style"
+            ).trim().toLowerCase() === "none"
+        ){
+            this.stackGuideDecor = null;
+        }
         this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
             borderWidth: `0px 0px 0px ${
                 this.getValueAsNumber("ruler.width")
@@ -228,6 +247,9 @@ class Guides {
             }
             if(this.activeGuideDecor){
                 editor.setDecorations(this.activeGuideDecor, []);
+            }
+            if(this.stackGuideDecor){
+                editor.setDecorations(this.stackGuideDecor, []);
             }
             if(this.rulerGuideDecor){
                 editor.setDecorations(this.rulerGuideDecor, []);
@@ -265,6 +287,7 @@ class Guides {
         var indentGuideRanges: vscode.Range[] = [];
         var indentBackgrounds: any[] = [];
         var activeGuideRanges: vscode.Range[] = [];
+        var stackGuideRanges: vscode.Range[] = [];
         var rulerRanges: vscode.Range[] = [];
         var maxLevel = this.indentBackgroundDecors.length;
 
@@ -280,9 +303,25 @@ class Guides {
                 "active.enabled"
             )
         );
+        var shouldStack = (
+            editor.selection.isEmpty &&
+            editor.selections.length == 1 &&
+            this.configurations.get<boolean>(
+                "stack.enabled"
+            )
+        );
         indentGuideRanges.push(
             ...primaryRanges.indentGuideRanges
         );
+        if(shouldStack){
+            stackGuideRanges.push(
+                ...primaryRanges.stackGuideRanges
+            );
+        }else{
+            indentGuideRanges.push(
+                ...primaryRanges.stackGuideRanges
+            );
+        }
         indentBackgrounds.push(
             ...primaryRanges.indentBackgrounds
         );
@@ -302,9 +341,11 @@ class Guides {
         );
 
         // Search through upper ranges
+        var lastActiveLevel = primaryRanges.activeLevel;
         for(var line = cursorPosition.line - 1; line >= 0; line--){
             var ranges = this.getRangesForLine(
-                editor, line, maxLevel, primaryRanges.activeLevel
+                editor, line, maxLevel,
+                primaryRanges.activeLevel, lastActiveLevel
             );
             indentGuideRanges.push(
                 ...ranges.indentGuideRanges
@@ -312,6 +353,15 @@ class Guides {
             indentBackgrounds.push(
                 ...ranges.indentBackgrounds
             );
+            if(shouldStack){
+                stackGuideRanges.push(
+                    ...ranges.stackGuideRanges
+                );
+            }else{
+                indentGuideRanges.push(
+                    ...ranges.stackGuideRanges
+                );
+            }
             if(ranges.activeGuideRange){
                 if(stillActive){
                     activeGuideRanges.push(
@@ -324,6 +374,9 @@ class Guides {
                 }
             }else if(primaryRanges.activeLevel !== ranges.activeLevel){
                 stillActive = false;
+            }
+            if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
+                lastActiveLevel = ranges.maxLevel;
             }
             rulerRanges.push(
                 ...ranges.rulerRanges
@@ -340,9 +393,11 @@ class Guides {
             )
         );
         var totalLines = editor.document.lineCount;
+        lastActiveLevel = primaryRanges.activeLevel;
         for(var line = cursorPosition.line + 1; line < totalLines; line++){
             var ranges = this.getRangesForLine(
-                editor, line, maxLevel, primaryRanges.activeLevel
+                editor, line, maxLevel,
+                primaryRanges.activeLevel, lastActiveLevel
             );
             indentGuideRanges.push(
                 ...ranges.indentGuideRanges
@@ -350,6 +405,15 @@ class Guides {
             indentBackgrounds.push(
                 ...ranges.indentBackgrounds
             );
+            if(shouldStack){
+                stackGuideRanges.push(
+                    ...ranges.stackGuideRanges
+                );
+            }else{
+                indentGuideRanges.push(
+                    ...ranges.stackGuideRanges
+                );
+            }
             if(ranges.activeGuideRange){
                 if(stillActive){
                     activeGuideRanges.push(
@@ -362,6 +426,9 @@ class Guides {
                 }
             }else if(primaryRanges.activeLevel !== ranges.activeLevel){
                 stillActive = false;
+            }
+            if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
+                lastActiveLevel = ranges.maxLevel;
             }
             rulerRanges.push(
                 ...ranges.rulerRanges
@@ -385,13 +452,18 @@ class Guides {
         if(this.activeGuideDecor){
             editor.setDecorations(this.activeGuideDecor, activeGuideRanges);
         }
+        if(this.stackGuideDecor){
+            editor.setDecorations(this.stackGuideDecor, stackGuideRanges);
+        }
         editor.setDecorations(this.rulerGuideDecor, rulerRanges);
     }
 
     getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
-                     maxLevel: number, activeLevel: number = -1){
+                     maxLevel: number, activeLevel: number = -1,
+                     lastActiveLevel: number = -1){
         var activeGuideRange: vscode.Range = null;
         var indentGuideRanges: vscode.Range[] = [];
+        var stackGuideRanges: vscode.Range[] = [];
         var indentBackgrounds: any[] = [];
         var rulerRanges: vscode.Range[] = [];
 
@@ -418,6 +490,10 @@ class Guides {
             }else{
                 activeLevel += totalNonNormalGuides;
             }
+        }
+
+        if(lastActiveLevel === -1){
+            lastActiveLevel = activeLevel;
         }
 
         var lastPosition = new vscode.Position(lineNumber, 0);
@@ -452,6 +528,16 @@ class Guides {
                         )
                     )){
                         activeGuideRange = new vscode.Range(position, position);
+                    }else if(normalGuideIndex < lastActiveLevel && (
+                        !inSelection || (inSelection &&
+                            !this.configurations.get<boolean>(
+                                "stack.hideOnSelection"
+                            )
+                        )
+                    )){
+                        stackGuideRanges.push(
+                            new vscode.Range(position, position)
+                        );
                     }else if(normalGuideIndex !== activeLevel && (
                         !inSelection || (inSelection &&
                             !this.configurations.get<boolean>(
@@ -501,7 +587,9 @@ class Guides {
             indentBackgrounds: indentBackgrounds,
             activeLevel: activeLevel,
             activeGuideRange: activeGuideRange,
-            rulerRanges: rulerRanges
+            stackGuideRanges: stackGuideRanges,
+            rulerRanges: rulerRanges,
+            maxLevel: guidelines.length
         };
     }
 

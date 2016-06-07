@@ -2,13 +2,20 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
     "url": "https://github.com/spywhere/vscode-guides/issues"
   },
   "homepage": "https://github.com/spywhere/vscode-guides/blob/master/README.md",
+  "keywords": [
+      "indentation",
+      "guides",
+      "indentation guides",
+      "ruler"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/spywhere/vscode-guides.git"
@@ -129,6 +136,50 @@
           "type": "boolean",
           "default": true,
           "description": "Hide active indentation guides in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.stack.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable stack indentation guides in addition to normal indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.stack.width": {
+          "type": "number",
+          "default": 1,
+          "description": "Stack indentation guides rendering width."
+        },
+        "guides.stack.color": {
+          "type": "string",
+          "default": "rgba(80, 80, 80, 0.75)",
+          "description": "Stack indentation guides rendering color."
+        },
+        "guides.stack.style": {
+          "type": "string",
+          "default": "solid",
+          "description": "Stack indentation guides rendering style.",
+          "enum": [
+            "none",
+            "dotted",
+            "dashed",
+            "solid",
+            "double",
+            "groove",
+            "ridge",
+            "inset",
+            "outset"
+          ]
+        },
+        "guides.stack.hideOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide stack indentation guides in selections.",
           "enum": [
             true,
             false

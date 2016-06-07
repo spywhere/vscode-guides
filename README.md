@@ -10,7 +10,7 @@ A Visual Studio Code extension for more guide lines
 Guides is simply an extension that add indentation guide lines and your own ruler guide lines.
 
 ### How Guides different from built-in indentation guides?
-- Active indentation guides
+- Stack and Active indentation guides
 - Indentation backgrounds
 - Color and style customizations
 - Hide on selection
@@ -64,6 +64,21 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Hide active indentation guides in selections.
 "guides.active.hideOnSelection": true,
 
+// Enable stack indentation guides in addition to normal indentation guides.
+"guides.stack.enabled": true,
+
+// Stack indentation guides rendering width.
+"guides.stack.width": 1,
+
+// Stack indentation guides rendering color.
+"guides.stack.color": "rgba(80, 80, 80, 0.75)",
+
+// Stack indentation guides rendering style.
+"guides.stack.style": "solid",
+
+// Hide stack indentation guides in selections.
+"guides.stack.hideOnSelection": true,
+
 // Ruler guide stop points.
 "guides.rulers": [],
 
@@ -96,6 +111,12 @@ Possible values can be access via auto-completion dialog.
 **Q:** Why guide lines show fragmented on empty lines?  
 **A:** Guides use border to draw its guide lines which required the character to be there.
 Since Visual Studio Code API does not provide the API for drawing line on empty space, this can be expected. 
+
+**Q:** What is the different in each guide line type?  
+**A:**
+- *Normal indentation guide* is a line that run down along each indentation level.
+- *Active indentation guide* is a line that run down along the last indentation level of the current line.
+- *Stack indentation guide* is a line that run down along each indentation level that comes before the active indentation level.
 
 **Q:** License?  
 **A:** MIT
