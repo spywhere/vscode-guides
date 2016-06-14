@@ -12,6 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
 class GuidesController {
     private guides: Guides;
     private disposable: vscode.Disposable;
+    private lastSelection: vscode.Selection;
 
     constructor(guides: Guides){
         this.guides = guides;
@@ -39,7 +40,23 @@ class GuidesController {
     }
 
     private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
-        this.guides.setNeedsUpdateEditor(event.textEditor);
+        var shouldUpdate = true;
+        if(event.selections.length === 1){
+            var selection = event.selections[0];
+            if(
+                this.lastSelection &&
+                selection.active.line === this.lastSelection.active.line &&
+                event.textEditor.document.lineAt(
+                    selection.active.line
+                ).firstNonWhitespaceCharacterIndex < selection.active.character - 1
+            ){
+                shouldUpdate = false;
+            }
+            this.lastSelection = selection;
+        }
+        if(shouldUpdate){
+            this.guides.setNeedsUpdateEditor(event.textEditor);
+        }
     }
 
     private updateEditorSettings(event: vscode.TextEditorOptionsChangeEvent){
