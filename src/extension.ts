@@ -45,10 +45,28 @@ class GuidesController {
             var selection = event.selections[0];
             if(
                 this.lastSelection &&
-                selection.active.line === this.lastSelection.active.line &&
-                event.textEditor.document.lineAt(
-                    selection.active.line
-                ).firstNonWhitespaceCharacterIndex < selection.active.character - 1
+                ((
+                    // If the cursor is on the same line and placed after the
+                    //   first non-whitespace character
+                    selection.active.line === this.lastSelection.active.line &&
+                    event.textEditor.document.lineAt(
+                        selection.active.line
+                    ).firstNonWhitespaceCharacterIndex <
+                    selection.active.character - 1
+                ) || (
+                    // If the cursor just move to the line above/below and the
+                    //   first non-whitespace character position of the both
+                    //   lines are the same
+                    Math.abs(
+                        selection.active.line - this.lastSelection.active.line
+                    ) === 1 &&
+                    event.textEditor.document.lineAt(
+                        selection.active.line
+                    ).firstNonWhitespaceCharacterIndex ===
+                    event.textEditor.document.lineAt(
+                        this.lastSelection.active.line
+                    ).firstNonWhitespaceCharacterIndex
+                ))
             ){
                 shouldUpdate = false;
             }
