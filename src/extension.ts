@@ -146,17 +146,39 @@ class Guides {
 
         var overrideStyle = !this.configurations.get<boolean>(
             "overrideDefault"
-        ) && vscode.workspace.getConfiguration("editor").get<boolean>(
-            "indentGuides", false
-        ) && this.isEqualOrNewerVersionThan(1, 0, 1);
+        );
+        var indentSettingNames = [{
+            name: "renderIndentGuides",
+            major: 1,
+            minor: 3,
+            patch: 0
+        }, {
+            name: "indentGuides",
+            major: 1,
+            minor: 0,
+            patch: 1
+        }];
+        var lastIndex = 0;
+        var defaultIndentEnabled = indentSettingNames.some(
+            (settings, index) => {
+                lastIndex = index;
+                return vscode.workspace.getConfiguration("editor").get<boolean>(
+                    settings.name, false
+                ) && this.isEqualOrNewerVersionThan(
+                    settings.major, settings.minor, settings.patch
+                );
+            }
+        );
+
         if(
-            overrideStyle &&
+            overrideStyle && defaultIndentEnabled &&
             !this.hasShowSuggestion["guide"]
         ){
+            var settings = indentSettingNames[lastIndex];
             this.hasShowSuggestion["guide"] = true;
             vscode.window.showWarningMessage(
                 "Guides extension has detected that you are using " +
-                "\"editor.indentGuides\" settings. " +
+                "\"editor." + settings.name + "\" settings. " +
                 "Guides will now disable all indentation guides by "+
                 "override the style to \"none\"."
             );
