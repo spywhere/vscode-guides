@@ -144,9 +144,6 @@ class Guides {
 
         this.sendStats = !this.configurations.get<boolean>("sendUsagesAndStats");
 
-        var overrideStyle = !this.configurations.get<boolean>(
-            "overrideDefault"
-        );
         var indentSettingNames = [{
             name: "renderIndentGuides",
             major: 1,
@@ -159,7 +156,9 @@ class Guides {
             patch: 1
         }];
         var lastIndex = 0;
-        var defaultIndentEnabled = indentSettingNames.some(
+        var overrideStyle  = !this.configurations.get<boolean>(
+            "overrideDefault"
+        ) && indentSettingNames.some(
             (settings, index) => {
                 lastIndex = index;
                 return vscode.workspace.getConfiguration("editor").get<boolean>(
@@ -171,7 +170,7 @@ class Guides {
         );
 
         if(
-            overrideStyle && defaultIndentEnabled &&
+            overrideStyle &&
             !this.hasShowSuggestion["guide"]
         ){
             var settings = indentSettingNames[lastIndex];
