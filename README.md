@@ -7,7 +7,7 @@ A Visual Studio Code extension for more guide lines
 ![Screenshot](images/screenshot.png)
 
 ### What is Guides?
-Guides is simply an extension that add indentation guide lines and your own ruler guide lines.
+Guides is simply an extension that add various indentation guide lines
 
 ### How Guides different from built-in indentation guides?
 - Stack and Active indentation guides

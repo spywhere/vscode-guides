@@ -94,16 +94,15 @@ class Guides {
     private indentGuideDecor: vscode.TextEditorDecorationType;
     private activeGuideDecor: vscode.TextEditorDecorationType;
     private stackGuideDecor: vscode.TextEditorDecorationType;
-    private rulerGuideDecor: vscode.TextEditorDecorationType;
     private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion = {
         "ruler": false,
         "guide": false
     };
-    private hasWarnDeprecate = {
-        "background": false,
-        "width": false
+
+    private hasWarnDeprecation = {
+        "ruler": false
     };
 
     private configurations: vscode.WorkspaceConfiguration;
@@ -133,9 +132,6 @@ class Guides {
         }
         if(this.stackGuideDecor){
             this.stackGuideDecor.dispose();
-        }
-        if(this.rulerGuideDecor){
-            this.rulerGuideDecor.dispose();
         }
     }
 
@@ -185,18 +181,6 @@ class Guides {
 
         this.timerDelay = this.configurations.get<number>("updateDelay");
         this.indentBackgroundDecors = [];
-        if(
-            this.configurations.has("normal.backgrounds") &&
-            !this.hasWarnDeprecate["background"]
-        ){
-            this.hasWarnDeprecate["background"] = true;
-            vscode.window.showWarningMessage(
-                "Guides extension has detected that you are still using " +
-                "\"guides.normal.backgrounds\" settings. " +
-                "Please change the settings to "+
-                "\"guides.indent.backgrounds\" instead."
-            );
-        }
         this.configurations.get<any>(
             "normal.backgrounds",
             this.configurations.get<any>(
@@ -210,77 +194,69 @@ class Guides {
             );
         });
 
-        [
-            "normal.width", "active.width", "ruler.width"
-        ].some((settingKey) => {
-            var hasWarn = this.hasWarnDeprecate["width"];
-            var isString = typeof(
-                this.configurations.get<any>(settingKey)
-            ) === "string";
-            if(isString && !hasWarn){
-                this.hasWarnDeprecate["width"] = true;
-                vscode.window.showWarningMessage(
-                    "Guides extension has detected that you are still using " +
-                    `\"guides.${settingKey}\" as a string. ` +
-                    "Please change the setting's value to "+
-                    "number instead."
-                );
-            }
-            return !isString || hasWarn;
-        });
+        this.indentGuideDecor = this.createTextEditorDecorationFromKey(
+            "normal", overrideStyle
+        );
+        this.activeGuideDecor = this.createTextEditorDecorationFromKey(
+            "active", overrideStyle
+        );
+        this.stackGuideDecor = this.createTextEditorDecorationFromKey(
+            "stack", overrideStyle
+        );
 
-        this.indentGuideDecor = vscode.window.createTextEditorDecorationType({
-            borderWidth: `0px 0px 0px ${
-                this.getValueAsNumber("normal.width")
-            }px`,
-            borderColor: this.configurations.get<string>("normal.color"),
-            borderStyle: this.configurations.get<string>("normal.style").trim()
-        });
         if(
-            overrideStyle ||
-            this.configurations.get<string>(
-                "normal.style"
-            ).trim().toLowerCase() === "none"
+            this.configurations.get<number[]>("rulers").length > 0 &&
+            !this.hasWarnDeprecation["ruler"]
         ){
-            this.indentGuideDecor = null;
+            this.hasWarnDeprecation["ruler"] = true;
+            vscode.window.showWarningMessage(
+                "Guides extension no longer supports ruler since Visual " +
+                "Studio Code has built-in ruler feature. Guides extension " +
+                "kindly suggests that you use built-in feature "+
+                "rather than using this extension."
+            );
         }
-        this.activeGuideDecor = vscode.window.createTextEditorDecorationType({
-            borderWidth: `0px 0px 0px ${
-                this.getValueAsNumber("active.width")
-            }px`,
-            borderColor: this.configurations.get<string>("active.color"),
-            borderStyle: this.configurations.get<string>("active.style").trim()
-        });
-        if(
-            overrideStyle ||
-            this.configurations.get<string>(
-                "active.style"
-            ).trim().toLowerCase() === "none"
-        ){
-            this.activeGuideDecor = null;
+    }
+
+    createTextEditorDecorationFromKey(settingsKey, overrideStyle=false){
+        var borderStyle = this.configurations.get<string>(
+            settingsKey + ".style"
+        ).trim();
+
+        if(overrideStyle || borderStyle.toLowerCase() === "none"){
+            return null;
         }
-        this.stackGuideDecor = vscode.window.createTextEditorDecorationType({
+
+        var options: vscode.DecorationRenderOptions = {
             borderWidth: `0px 0px 0px ${
-                this.getValueAsNumber("stack.width")
+                this.getValueAsNumber(settingsKey + ".width")
             }px`,
-            borderColor: this.configurations.get<string>("stack.color"),
-            borderStyle: this.configurations.get<string>("stack.style").trim()
-        });
-        if(
-            overrideStyle ||
-            this.configurations.get<string>(
-                "stack.style"
-            ).trim().toLowerCase() === "none"
-        ){
-            this.stackGuideDecor = null;
+            borderStyle: borderStyle
+        };
+
+        var darkColor = this.configurations.get<string>(
+            settingsKey + ".color.dark", null
+        );
+        var lightColor = this.configurations.get<string>(
+            settingsKey + ".color.light", null
+        );
+
+        if(!darkColor || !lightColor){
+            options.borderColor = this.configurations.get<string>(
+                settingsKey + ".color"
+            );
         }
-        this.rulerGuideDecor = vscode.window.createTextEditorDecorationType({
-            borderWidth: `0px 0px 0px ${
-                this.getValueAsNumber("ruler.width")
-            }px`,
-            borderColor: this.configurations.get<string>("ruler.color"),
-            borderStyle: this.configurations.get<string>("ruler.style").trim()
-        });
+        if(darkColor){
+            options.dark = {
+                borderColor: darkColor
+            };
+        }
+        if(lightColor){
+            options.light = {
+                borderColor: lightColor
+            };
+        }
+        return vscode.window.createTextEditorDecorationType(options);
     }
 
     getValueAsNumber(settingKey){
@@ -306,9 +282,6 @@ class Guides {
             }
             if(this.stackGuideDecor){
                 editor.setDecorations(this.stackGuideDecor, []);
-            }
-            if(this.rulerGuideDecor){
-                editor.setDecorations(this.rulerGuideDecor, []);
             }
         });
     }
@@ -344,7 +317,6 @@ class Guides {
         var indentBackgrounds: any[] = [];
         var activeGuideRanges: vscode.Range[] = [];
         var stackGuideRanges: vscode.Range[] = [];
-        var rulerRanges: vscode.Range[] = [];
         var maxLevel = this.indentBackgroundDecors.length;
 
         var cursorPosition = editor.selection.active;
@@ -392,9 +364,6 @@ class Guides {
                 );
             }
         }
-        rulerRanges.push(
-            ...primaryRanges.rulerRanges
-        );
 
         // Search through upper ranges
         var lastActiveLevel = primaryRanges.activeLevel;
@@ -434,9 +403,6 @@ class Guides {
             if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
                 lastActiveLevel = ranges.maxLevel;
             }
-            rulerRanges.push(
-                ...ranges.rulerRanges
-            );
         }
 
         // Search through lower ranges
@@ -486,9 +452,6 @@ class Guides {
             if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
                 lastActiveLevel = ranges.maxLevel;
             }
-            rulerRanges.push(
-                ...ranges.rulerRanges
-            );
         }
 
         this.indentBackgroundDecors.forEach((decoration, level) => {
@@ -511,7 +474,6 @@ class Guides {
         if(this.stackGuideDecor){
             editor.setDecorations(this.stackGuideDecor, stackGuideRanges);
         }
-        editor.setDecorations(this.rulerGuideDecor, rulerRanges);
     }
 
     getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
@@ -521,7 +483,6 @@ class Guides {
         var indentGuideRanges: vscode.Range[] = [];
         var stackGuideRanges: vscode.Range[] = [];
         var indentBackgrounds: any[] = [];
-        var rulerRanges: vscode.Range[] = [];
 
         var guidelines = this.getGuides(
             editor.document.lineAt(lineNumber), editor.options.tabSize
@@ -606,30 +567,6 @@ class Guides {
                         );
                     }
                 }
-            }else if(guideline.type === "ruler"){
-                if(
-                    !this.configurations.get<boolean>("overrideDefault") &&
-                    !this.hasShowSuggestion["ruler"] &&
-                    this.isEqualOrNewerVersionThan(0, 10, 10)
-                ){
-                    this.hasShowSuggestion["ruler"] = true;
-                    vscode.window.showInformationMessage(
-                        "Visual Studio Code has built-in ruler" +
-                        " feature. Guides extension kindly " +
-                        "suggests that you use built-in feature "+
-                        "rather than using this extension."
-                    );
-                }
-                if(
-                    !inSelection || (
-                        inSelection &&
-                        !this.configurations.get<boolean>(
-                            "ruler.hideOnSelection"
-                        )
-                    )
-                ){
-                    rulerRanges.push(new vscode.Range(position, position));
-                }
             }
             lastPosition = position;
         });
@@ -644,7 +581,6 @@ class Guides {
             activeLevel: activeLevel,
             activeGuideRange: activeGuideRange,
             stackGuideRanges: stackGuideRanges,
-            rulerRanges: rulerRanges,
             maxLevel: guidelines.length
         };
     }
@@ -663,23 +599,6 @@ class Guides {
             0, line.firstNonWhitespaceCharacterIndex
         );
         var singleMatch = whitespaces.match(pattern);
-
-        this.configurations.get<Array<number>>("rulers").forEach((stop) => {
-            var sourceIndex = 0;
-            var index = 0;
-            if(stop < line.text.replace(pattern, emptySpace).length){
-                if(singleMatch){
-                    singleMatch.forEach((match) => {
-                        sourceIndex += match.length;
-                        index += indentSize;
-                    });
-                }
-                guides.push({
-                    type: "ruler",
-                    position: sourceIndex + stop - index
-                });
-            }
-        });
 
         if(!singleMatch || singleMatch.length == 0){
             return guides;
