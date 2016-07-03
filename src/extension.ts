@@ -90,6 +90,20 @@ class GuidesController {
     }
 }
 
+interface GuidesBackground {
+    level: number;
+    range: vscode.Range;
+}
+
+interface GuidesRange {
+    indentGuideRanges: vscode.Range[];
+    indentBackgrounds: GuidesBackground[];
+    activeLevel: number;
+    activeGuideRange: vscode.Range;
+    stackGuideRanges: vscode.Range[];
+    maxLevel: number;
+}
+
 class Guides {
     private indentGuideDecor: vscode.TextEditorDecorationType;
     private activeGuideDecor: vscode.TextEditorDecorationType;
@@ -97,7 +111,6 @@ class Guides {
     private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion = {
-        "ruler": false,
         "guide": false
     };
 
@@ -478,11 +491,11 @@ class Guides {
 
     getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
                      maxLevel: number, activeLevel: number = -1,
-                     lastActiveLevel: number = -1){
+                     lastActiveLevel: number = -1) : GuidesRange {
         var activeGuideRange: vscode.Range = null;
         var indentGuideRanges: vscode.Range[] = [];
         var stackGuideRanges: vscode.Range[] = [];
-        var indentBackgrounds: any[] = [];
+        var indentBackgrounds: GuidesBackground[] = [];
 
         var guidelines = this.getGuides(
             editor.document.lineAt(lineNumber), editor.options.tabSize
@@ -583,6 +596,34 @@ class Guides {
             stackGuideRanges: stackGuideRanges,
             maxLevel: guidelines.length
         };
+    }
+
+    adjustRangesForLine(ranges: GuidesRange, lineNumber: number) : GuidesRange {
+        return {
+            indentGuideRanges: ranges.indentGuideRanges.map(guide => {
+                return this.adjustRangeForLine(guide, lineNumber);
+            }),
+            indentBackgrounds: ranges.indentBackgrounds.map(background => {
+                return {
+                    level: background.level,
+                    range: this.adjustRangeForLine(background.range, lineNumber)
+                };
+            }),
+            activeLevel: ranges.activeLevel,
+            activeGuideRange: this.adjustRangeForLine(
+                ranges.activeGuideRange, lineNumber
+            ),
+            stackGuideRanges: ranges.stackGuideRanges.map(guide => {
+                return this.adjustRangeForLine(guide, lineNumber);
+            }),
+            maxLevel: ranges.maxLevel
+        };
+    }
+
+    adjustRangeForLine(range: vscode.Range, lineNumber: number){
+        var start = new vscode.Position(lineNumber, range.start.character);
+        var end = new vscode.Position(lineNumber, range.end.character);
+        return new vscode.Range(start, end);
     }
 
     getGuides(line: vscode.TextLine, indentSize: number){
