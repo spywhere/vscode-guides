@@ -2,7 +2,7 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.4.6",
+  "version": "0.5.0",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
@@ -21,7 +21,7 @@
     "url": "https://github.com/spywhere/vscode-guides.git"
   },
   "engines": {
-    "vscode": "^0.10.1"
+    "vscode": "^1.0.0"
   },
   "categories": [
     "Other"
@@ -221,11 +221,12 @@
   },
   "scripts": {
     "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "typescript": "^1.6.2",
-    "vscode": "0.10.x"
+    "typescript": "^1.8.5",
+    "vscode": "^0.11.0"
   },
   "dependencies": {
     "request": "^2.72.0"

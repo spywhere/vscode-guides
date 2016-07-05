@@ -40,8 +40,11 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Normal indentation guides rendering width.
 "guides.normal.width": 1,
 
-// Normal indentation guides rendering color.
-"guides.normal.color": "rgba(60, 60, 60, 0.75)",
+// Normal indentation guides rendering color for dark themes.
+"guides.normal.color.dark": "rgba(60, 60, 60, 0.75)",
+
+// Normal indentation guides rendering color for light themes.
+"guides.normal.color.light": "rgba(220, 220, 220, 0.75)",
 
 // Normal indentation guides rendering style.
 "guides.normal.style": "solid",
@@ -55,8 +58,11 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Active indentation guides rendering width.
 "guides.active.width": 1,
 
-// Active indentation guides rendering color.
-"guides.active.color": "rgba(120, 60, 60, 0.75)",
+// Active indentation guides rendering color for dark themes.
+"guides.active.color.dark": "rgba(120, 60, 60, 0.75)",
+
+// Active indentation guides rendering color for light themes.
+"guides.active.color.light": "rgba(200, 100, 100, 0.75)",
 
 // Active indentation guides rendering style.
 "guides.active.style": "solid",
@@ -70,8 +76,11 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Stack indentation guides rendering width.
 "guides.stack.width": 1,
 
-// Stack indentation guides rendering color.
-"guides.stack.color": "rgba(80, 80, 80, 0.75)",
+// Stack indentation guides rendering color for dark themes.
+"guides.stack.color.dark": "rgba(80, 80, 80, 0.75)",
+
+// Stack indentation guides rendering color for light themes.
+"guides.stack.color.light": "rgba(180, 180, 180, 0.75)",
 
 // Stack indentation guides rendering style.
 "guides.stack.style": "solid",
@@ -79,25 +88,10 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Hide stack indentation guides in selections.
 "guides.stack.hideOnSelection": true,
 
-// Ruler guide stop points.
-"guides.rulers": [],
-
-// Ruler guides rendering width.
-"guides.ruler.width": 1,
-
-// Ruler guides rendering color.
-"guides.ruler.color": "#cc9999",
-
-// Ruler guides rendering style.
-"guides.ruler.style": "solid",
-
-// Hide ruler guides in selections.
-"guides.ruler.hideOnSelection": true,
-
 // Time duration between each guide lines update (in seconds).
 "guides.updateDelay": 0.1,
 
-// Override default Visual Studio Code behaviours.
+// Override default Visual Studio Code behaviours (such as indentation guides or rulers).
 //   Set to "true" to suppress any suggestion towards default Visual Studio Code behaviours.
 "guides.overrideDefault": false,
 

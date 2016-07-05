@@ -1,4 +1,5 @@
-import * as vscode from 'vscode';
+"use strict";
+import * as vscode from "vscode";
 var process = require("process");
 var request = require("request");
 var querystring = require("querystring");
@@ -507,7 +508,7 @@ class Guides {
         var indentBackgrounds: GuidesBackground[] = [];
 
         var guidelines = this.getGuides(
-            editor.document.lineAt(lineNumber), editor.options.tabSize
+            editor.document.lineAt(lineNumber), editor.options.tabSize as number
         );
         var empty = guidelines === null;
         if(empty){
