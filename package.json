@@ -67,10 +67,15 @@
           "default": 1,
           "description": "Normal indentation guides rendering width."
         },
-        "guides.normal.color": {
+        "guides.normal.color.dark": {
           "type": "string",
           "default": "rgba(60, 60, 60, 0.75)",
-          "description": "Normal indentation guides rendering color."
+          "description": "Normal indentation guides rendering color for dark themes."
+        },
+        "guides.normal.color.light": {
+          "type": "string",
+          "default": "rgba(220, 220, 220, 0.75)",
+          "description": "Normal indentation guides rendering color for light themes."
         },
         "guides.normal.style": {
           "type": "string",
@@ -111,10 +116,15 @@
           "default": 1,
           "description": "Active indentation guides rendering width."
         },
-        "guides.active.color": {
+        "guides.active.color.dark": {
           "type": "string",
           "default": "rgba(120, 60, 60, 0.75)",
-          "description": "Active indentation guides rendering color."
+          "description": "Active indentation guides rendering color for dark themes."
+        },
+        "guides.active.color.light": {
+          "type": "string",
+          "default": "rgba(200, 100, 100, 0.75)",
+          "description": "Active indentation guides rendering color for light themes."
         },
         "guides.active.style": {
           "type": "string",
@@ -155,10 +165,15 @@
           "default": 1,
           "description": "Stack indentation guides rendering width."
         },
-        "guides.stack.color": {
+        "guides.stack.color.dark": {
           "type": "string",
           "default": "rgba(80, 80, 80, 0.75)",
-          "description": "Stack indentation guides rendering color."
+          "description": "Stack indentation guides rendering color for dark themes."
+        },
+        "guides.stack.color.light": {
+          "type": "string",
+          "default": "rgba(180, 180, 180, 0.75)",
+          "description": "Stack indentation guides rendering color for light themes."
         },
         "guides.stack.style": {
           "type": "string",
@@ -180,46 +195,6 @@
           "type": "boolean",
           "default": true,
           "description": "Hide stack indentation guides in selections.",
-          "enum": [
-            true,
-            false
-          ]
-        },
-        "guides.rulers": {
-          "type": "array",
-          "default": [],
-          "description": "Ruler guide stop points."
-        },
-        "guides.ruler.width": {
-          "type": "number",
-          "default": 1,
-          "description": "Ruler guides rendering width."
-        },
-        "guides.ruler.color": {
-          "type": "string",
-          "default": "#cc9999",
-          "description": "Ruler guides rendering color."
-        },
-        "guides.ruler.style": {
-          "type": "string",
-          "default": "solid",
-          "description": "Ruler guides rendering style.",
-          "enum": [
-            "none",
-            "dotted",
-            "dashed",
-            "solid",
-            "double",
-            "groove",
-            "ridge",
-            "inset",
-            "outset"
-          ]
-        },
-        "guides.ruler.hideOnSelection": {
-          "type": "boolean",
-          "default": true,
-          "description": "Hide ruler guides in selections.",
           "enum": [
             true,
             false

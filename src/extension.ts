@@ -90,6 +90,12 @@ class GuidesController {
     }
 }
 
+interface OptionVariant<T> {
+    baseValue: T;
+    darkValue: T;
+    lightValue: T;
+}
+
 interface GuidesBackground {
     level: number;
     range: vscode.Range;
@@ -218,7 +224,7 @@ class Guides {
         );
 
         if(
-            this.configurations.get<number[]>("rulers").length > 0 &&
+            this.configurations.get<number[]>("rulers", []).length > 0 &&
             !this.hasWarnDeprecation["ruler"]
         ){
             this.hasWarnDeprecation["ruler"] = true;
@@ -231,7 +237,7 @@ class Guides {
         }
     }
 
-    createTextEditorDecorationFromKey(settingsKey, overrideStyle=false){
+    createTextEditorDecorationFromKey(settingsKey: string, overrideStyle=false){
         var borderStyle = this.configurations.get<string>(
             settingsKey + ".style"
         ).trim();
@@ -242,42 +248,45 @@ class Guides {
 
         var options: vscode.DecorationRenderOptions = {
             borderWidth: `0px 0px 0px ${
-                this.getValueAsNumber(settingsKey + ".width")
+                this.configurations.get<number>(settingsKey + ".width")
             }px`,
             borderStyle: borderStyle
         };
 
-        var darkColor = this.configurations.get<string>(
-            settingsKey + ".color.dark", null
-        );
-        var lightColor = this.configurations.get<string>(
-            settingsKey + ".color.light", null
-        );
+        var colorVariant = this.getOptionVariants(settingsKey + ".color");
 
-        if(!darkColor || !lightColor){
-            options.borderColor = this.configurations.get<string>(
-                settingsKey + ".color"
-            );
-        }
-        if(darkColor){
+        options.borderColor = colorVariant.baseValue;
+        if(colorVariant.darkValue){
             options.dark = {
-                borderColor: darkColor
+                borderColor: colorVariant.darkValue
             };
         }
-        if(lightColor){
+        if(colorVariant.lightValue){
             options.light = {
-                borderColor: lightColor
+                borderColor: colorVariant.lightValue
             };
         }
         return vscode.window.createTextEditorDecorationType(options);
     }
 
-    getValueAsNumber(settingKey){
-        var value = this.configurations.get<any>(settingKey);
-        if(typeof(value) !== "number"){
-            value = parseInt(value);
+    getOptionVariants(settingsKey: string) : OptionVariant<string> {
+        var baseValue = this.configurations.get<string>(
+            settingsKey, null
+        );
+        var darkValue = this.configurations.get<string>(
+            settingsKey + ".dark"
+        );
+        var lightValue = this.configurations.get<string>(
+            settingsKey + ".light"
+        );
+        if(!baseValue){
+            baseValue = darkValue || lightValue;
         }
-        return value;
+        return {
+            baseValue: baseValue,
+            darkValue: darkValue,
+            lightValue: lightValue
+        };
     }
 
     clearEditorsDecorations(){
