@@ -79,6 +79,7 @@ class GuidesController {
     }
 
     private updateEditorSettings(event: vscode.TextEditorOptionsChangeEvent){
+        this.guides.updateFallbackIndentSize(event.options.tabSize as number);
         this.guides.setNeedsUpdateEditor(event.textEditor);
     }
 
@@ -129,9 +130,16 @@ class Guides {
 
     private startupTimer = Date.now();
     private startupStop = null;
+    private retryTimer = Date.now();
+    private retryDuration = 300;
     private timerDelay = 0.1;
     private updateTimer: number = null;
     private sendStats = false;
+    private fallbackIndentSize = 4;
+
+    updateFallbackIndentSize(indentSize: number){
+        this.fallbackIndentSize = indentSize || 4;
+    }
 
     reset(){
         this.clearEditorsDecorations();
@@ -508,7 +516,8 @@ class Guides {
         var indentBackgrounds: GuidesBackground[] = [];
 
         var guidelines = this.getGuides(
-            editor.document.lineAt(lineNumber), editor.options.tabSize as number
+            editor.document.lineAt(lineNumber),
+            editor.options.tabSize as number || this.fallbackIndentSize
         );
         var empty = guidelines === null;
         if(empty){
@@ -684,10 +693,13 @@ class Guides {
     sendUsagesAndStats(){
         // Want to see this data?
         //   There! http://stats.digitalparticle.com/
-        console.log("[Guides] Sending usage statistics...");
         if(this.startupStop === null){
             this.startupStop = Date.now();
         }
+        if(this.retryTimer - Date.now() > 0){
+            return;
+        }
+        console.log("[Guides] Sending usage statistics...");
         var startupTime = (this.startupStop - this.startupTimer) / 1000.0;
         var data = querystring.stringify({
             "name": "guides",
@@ -726,6 +738,15 @@ class Guides {
                     console.log(
                         "[Guides] Usage statistics has successfully sent"
                     );
+                }
+                if(!this.sendStats){
+                    this.retryTimer = Date.now() + this.retryDuration * 1000;
+                    console.log(
+                        "[Guides] Usage statistics will retry in the next " +
+                        (this.retryDuration / 60) +
+                        " minutes"
+                    );
+                    this.retryDuration *= 2;
                 }
             }
         );
