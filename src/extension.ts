@@ -1,11 +1,11 @@
 "use strict";
 import * as vscode from "vscode";
-var process = require("process");
-var request = require("request");
-var querystring = require("querystring");
+let process = require("process");
+let request = require("request");
+let querystring = require("querystring");
 
 export function activate(context: vscode.ExtensionContext) {
-    var guides = new Guides();
+    let guides = new Guides();
     context.subscriptions.push(new GuidesController(guides));
     context.subscriptions.push(guides);
 }
@@ -41,9 +41,9 @@ class GuidesController {
     }
 
     private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
-        var shouldUpdate = true;
+        let shouldUpdate = true;
         if(event.selections.length === 1){
-            var selection = event.selections[0];
+            let selection = event.selections[0];
             if(
                 this.lastSelection &&
                 ((
@@ -133,7 +133,7 @@ class Guides {
     private retryTimer = Date.now();
     private retryDuration = 300;
     private timerDelay = 0.1;
-    private updateTimer: number = null;
+    private updateTimer: NodeJS.Timer = null;
     private sendStats = false;
     private fallbackIndentSize = 4;
 
@@ -163,12 +163,31 @@ class Guides {
         }
     }
 
+    getConfig<T>(section: string, defaultValue?: T): T {
+        let editor = vscode.window.activeTextEditor;
+        let configValue = this.configurations.get<T>(section, defaultValue);
+
+        if(!editor){
+            return configValue;
+        }
+
+        let editorConfigSection = `${section}.${editor.document.languageId}`;
+
+        if(!this.configurations.has(editorConfigSection)){
+            return configValue;
+        }
+
+        return this.configurations.get<T>(
+            `${section}.${editor.document.languageId}`, configValue
+        );
+    }
+
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
 
-        this.sendStats = !this.configurations.get<boolean>("sendUsagesAndStats");
+        this.sendStats = !this.getConfig<boolean>("sendUsagesAndStats");
 
-        var indentSettingNames = [{
+        let indentSettingNames = [{
             name: "renderIndentGuides",
             major: 1,
             minor: 3,
@@ -179,8 +198,8 @@ class Guides {
             minor: 0,
             patch: 1
         }];
-        var lastIndex = 0;
-        var overrideStyle  = !this.configurations.get<boolean>(
+        let lastIndex = 0;
+        let overrideStyle  = !this.getConfig<boolean>(
             "overrideDefault"
         ) && indentSettingNames.some(
             (settings, index) => {
@@ -197,7 +216,7 @@ class Guides {
             overrideStyle &&
             !this.hasShowSuggestion["guide"]
         ){
-            var settings = indentSettingNames[lastIndex];
+            let settings = indentSettingNames[lastIndex];
             this.hasShowSuggestion["guide"] = true;
             vscode.window.showWarningMessage(
                 "Guides extension has detected that you are using " +
@@ -207,11 +226,11 @@ class Guides {
             );
         }
 
-        this.timerDelay = this.configurations.get<number>("updateDelay");
+        this.timerDelay = this.getConfig<number>("updateDelay");
         this.indentBackgroundDecors = [];
-        this.configurations.get<any>(
+        this.getConfig<any>(
             "normal.backgrounds",
-            this.configurations.get<any>(
+            this.getConfig<any>(
                 "indent.backgrounds"
             )
         ).forEach((backgroundColor) => {
@@ -233,7 +252,7 @@ class Guides {
         );
 
         if(
-            this.configurations.get<number[]>("rulers", []).length > 0 &&
+            this.getConfig<number[]>("rulers", []).length > 0 &&
             !this.hasWarnDeprecation["ruler"]
         ){
             this.hasWarnDeprecation["ruler"] = true;
@@ -247,7 +266,7 @@ class Guides {
     }
 
     createTextEditorDecorationFromKey(settingsKey: string, overrideStyle=false){
-        var borderStyle = this.configurations.get<string>(
+        let borderStyle = this.getConfig<string>(
             settingsKey + ".style"
         ).trim();
 
@@ -255,14 +274,14 @@ class Guides {
             return null;
         }
 
-        var options: vscode.DecorationRenderOptions = {
+        let options: vscode.DecorationRenderOptions = {
             borderWidth: `0px 0px 0px ${
-                this.configurations.get<number>(settingsKey + ".width")
+                this.getConfig<number>(settingsKey + ".width")
             }px`,
             borderStyle: borderStyle
         };
 
-        var colorVariant = this.getOptionVariants(settingsKey + ".color");
+        let colorVariant = this.getOptionVariants(settingsKey + ".color");
 
         options.borderColor = colorVariant.baseValue;
         if(colorVariant.darkValue){
@@ -279,13 +298,13 @@ class Guides {
     }
 
     getOptionVariants(settingsKey: string) : OptionVariant<string> {
-        var baseValue = this.configurations.get<string>(
+        let baseValue = this.getConfig<string>(
             settingsKey, null
         );
-        var darkValue = this.configurations.get<string>(
+        let darkValue = this.getConfig<string>(
             settingsKey + ".dark"
         );
-        var lightValue = this.configurations.get<string>(
+        let lightValue = this.getConfig<string>(
             settingsKey + ".light"
         );
         if(!baseValue){
@@ -344,28 +363,28 @@ class Guides {
             return;
         }
 
-        var indentGuideRanges: vscode.Range[] = [];
-        var indentBackgrounds: any[] = [];
-        var activeGuideRanges: vscode.Range[] = [];
-        var stackGuideRanges: vscode.Range[] = [];
-        var maxLevel = this.indentBackgroundDecors.length;
+        let indentGuideRanges: vscode.Range[] = [];
+        let indentBackgrounds: any[] = [];
+        let activeGuideRanges: vscode.Range[] = [];
+        let stackGuideRanges: vscode.Range[] = [];
+        let maxLevel = this.indentBackgroundDecors.length;
 
-        var cursorPosition = editor.selection.active;
-        var primaryRanges = this.getRangesForLine(
+        let cursorPosition = editor.selection.active;
+        let primaryRanges = this.getRangesForLine(
             editor, cursorPosition.line, maxLevel
         );
-        var stillActive = (
+        let stillActive = (
             primaryRanges.activeGuideRange !== null &&
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
-            this.configurations.get<boolean>(
+            this.getConfig<boolean>(
                 "active.enabled"
             )
         );
-        var shouldStack = (
+        let shouldStack = (
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
-            this.configurations.get<boolean>(
+            this.getConfig<boolean>(
                 "stack.enabled"
             )
         );
@@ -397,9 +416,9 @@ class Guides {
         }
 
         // Search through upper ranges
-        var lastActiveLevel = primaryRanges.activeLevel;
-        for(var line = cursorPosition.line - 1; line >= 0; line--){
-            var ranges = this.getRangesForLine(
+        let lastActiveLevel = primaryRanges.activeLevel;
+        for(let line = cursorPosition.line - 1; line >= 0; line--){
+            let ranges = this.getRangesForLine(
                 editor, line, maxLevel,
                 primaryRanges.activeLevel, lastActiveLevel
             );
@@ -441,14 +460,14 @@ class Guides {
             primaryRanges.activeGuideRange !== null &&
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
-            this.configurations.get<boolean>(
+            this.getConfig<boolean>(
                 "active.enabled"
             )
         );
-        var totalLines = editor.document.lineCount;
+        let totalLines = editor.document.lineCount;
         lastActiveLevel = primaryRanges.activeLevel;
-        for(var line = cursorPosition.line + 1; line < totalLines; line++){
-            var ranges = this.getRangesForLine(
+        for(let line = cursorPosition.line + 1; line < totalLines; line++){
+            let ranges = this.getRangesForLine(
                 editor, line, maxLevel,
                 primaryRanges.activeLevel, lastActiveLevel
             );
@@ -510,23 +529,23 @@ class Guides {
     getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
                      maxLevel: number, activeLevel: number = -1,
                      lastActiveLevel: number = -1) : GuidesRange {
-        var activeGuideRange: vscode.Range = null;
-        var indentGuideRanges: vscode.Range[] = [];
-        var stackGuideRanges: vscode.Range[] = [];
-        var indentBackgrounds: GuidesBackground[] = [];
+        let activeGuideRange: vscode.Range = null;
+        let indentGuideRanges: vscode.Range[] = [];
+        let stackGuideRanges: vscode.Range[] = [];
+        let indentBackgrounds: GuidesBackground[] = [];
 
-        var guidelines = this.getGuides(
+        let guidelines = this.getGuides(
             editor.document.lineAt(lineNumber),
             editor.options.tabSize as number || this.fallbackIndentSize
         );
-        var empty = guidelines === null;
+        let empty = guidelines === null;
         if(empty){
             guidelines = [];
         }
-        var totalNonNormalGuides = 0;
+        let totalNonNormalGuides = 0;
         if(activeLevel === -1){
-            for (var index = guidelines.length - 1; index >= 0; index--) {
-                var guide = guidelines[index];
+            for (let index = guidelines.length - 1; index >= 0; index--) {
+                let guide = guidelines[index];
                 if(guide.type === "normal"){
                     activeLevel = index;
                     break;
@@ -545,18 +564,18 @@ class Guides {
             lastActiveLevel = activeLevel;
         }
 
-        var lastPosition = new vscode.Position(lineNumber, 0);
-        var normalGuideIndex = 0;
+        let lastPosition = new vscode.Position(lineNumber, 0);
+        let normalGuideIndex = 0;
         guidelines.forEach((guideline, level) => {
-            var position = new vscode.Position(lineNumber, guideline.position);
-            var inSelection = editor.selections.some((selection) => {
+            let position = new vscode.Position(lineNumber, guideline.position);
+            let inSelection = editor.selections.some((selection) => {
                 return selection.contains(position);
             });
             if(guideline.type === "normal" || guideline.type === "extra"){
                 // Add background color stop points if there are colors
                 if(maxLevel > 0 && (!inSelection || (
                     inSelection &&
-                    !this.configurations.get<boolean>(
+                    !this.getConfig<boolean>(
                         "indent.hideBackgroundOnSelection"
                     )
                 ))){
@@ -571,7 +590,7 @@ class Guides {
                     normalGuideIndex += 1;
                     if(normalGuideIndex === activeLevel && (
                         !inSelection || (inSelection &&
-                            !this.configurations.get<boolean>(
+                            !this.getConfig<boolean>(
                                 "active.hideOnSelection"
                             )
                         )
@@ -579,7 +598,7 @@ class Guides {
                         activeGuideRange = new vscode.Range(position, position);
                     }else if(normalGuideIndex < lastActiveLevel && (
                         !inSelection || (inSelection &&
-                            !this.configurations.get<boolean>(
+                            !this.getConfig<boolean>(
                                 "stack.hideOnSelection"
                             )
                         )
@@ -589,7 +608,7 @@ class Guides {
                         );
                     }else if(normalGuideIndex !== activeLevel && (
                         !inSelection || (inSelection &&
-                            !this.configurations.get<boolean>(
+                            !this.getConfig<boolean>(
                                 "normal.hideOnSelection"
                             )
                         )
@@ -640,8 +659,8 @@ class Guides {
     }
 
     adjustRangeForLine(range: vscode.Range, lineNumber: number){
-        var start = new vscode.Position(lineNumber, range.start.character);
-        var end = new vscode.Position(lineNumber, range.end.character);
+        let start = new vscode.Position(lineNumber, range.start.character);
+        let end = new vscode.Position(lineNumber, range.end.character);
         return new vscode.Range(start, end);
     }
 
@@ -649,22 +668,22 @@ class Guides {
         if(line.isEmptyOrWhitespace){
             return null;
         }
-        var pattern = new RegExp(
+        let pattern = new RegExp(
             ` {${indentSize}}| {0,${indentSize - 1}}\t`,
             "g"
         );
-        var emptySpace = " ".repeat(indentSize);
-        var guides = [];
-        var whitespaces = line.text.substr(
+        let emptySpace = " ".repeat(indentSize);
+        let guides = [];
+        let whitespaces = line.text.substr(
             0, line.firstNonWhitespaceCharacterIndex
         );
-        var singleMatch = whitespaces.match(pattern);
+        let singleMatch = whitespaces.match(pattern);
 
         if(!singleMatch || singleMatch.length == 0){
             return guides;
         }
         if(
-            this.configurations.get<boolean>(
+            this.getConfig<boolean>(
                 "indent.showFirstIndentGuides"
             )
         ){
@@ -673,9 +692,9 @@ class Guides {
                 position: 0
             });
         }
-        var index = 0;
+        let index = 0;
         for(
-            var indentLevel=0;
+            let indentLevel=0;
             indentLevel < singleMatch.length;
             indentLevel++
         ){
@@ -700,8 +719,8 @@ class Guides {
             return;
         }
         console.log("[Guides] Sending usage statistics...");
-        var startupTime = (this.startupStop - this.startupTimer) / 1000.0;
-        var data = querystring.stringify({
+        let startupTime = (this.startupStop - this.startupTimer) / 1000.0;
+        let data = querystring.stringify({
             "name": "guides",
             "schema": "0.1",
             "version": vscode.extensions.getExtension(
@@ -753,15 +772,15 @@ class Guides {
     }
 
     isEqualOrNewerVersionThan(major: number, minor: number, patch: number){
-        var targetVersions = [major, minor, patch];
-        var currentVersions = vscode.version.match(
+        let targetVersions = [major, minor, patch];
+        let currentVersions = vscode.version.match(
             "\\d+\\.\\d+\\.\\d+"
         )[0].split(".").map((value)=>{
             return parseInt(value);
         });
-        for (var index = 0; index < targetVersions.length; index++) {
-            var targetVersion = targetVersions[index];
-            var currentVersion = currentVersions[index];
+        for (let index = 0; index < targetVersions.length; index++) {
+            let targetVersion = targetVersions[index];
+            let currentVersion = currentVersions[index];
             if(currentVersion < targetVersion){
                 return false;
             }
