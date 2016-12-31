@@ -1,8 +1,8 @@
 "use strict";
 import * as vscode from "vscode";
-let process = require("process");
-let request = require("request");
-let querystring = require("querystring");
+import * as os from "os";
+import * as request from "request";
+import * as querystring from "querystring";
 
 export function activate(context: vscode.ExtensionContext) {
     let guides = new Guides();
@@ -727,8 +727,8 @@ class Guides {
                 "spywhere.guides"
             ).packageJSON["version"],
             "vscode_version": vscode.version,
-            "platform": process.platform,
-            "architecture": process.arch,
+            "platform": os.platform(),
+            "architecture": os.arch(),
             "startup_time": startupTime.toFixed(3) + "s"
         });
 
