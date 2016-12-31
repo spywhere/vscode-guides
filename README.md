@@ -104,13 +104,24 @@ Possible values can be access via auto-completion dialog.
 
 **Q:** Why guide lines show fragmented on empty lines?  
 **A:** Guides use border to draw its guide lines which required the character to be there.
-Since Visual Studio Code API does not provide the API for drawing line on empty space, this can be expected. 
+Since Visual Studio Code API does not provide the API for drawing line on empty space, this can be expected.
 
 **Q:** What is the different in each guide line type?  
 **A:**
 - *Normal indentation guide* is a line that run down along each indentation level.
 - *Active indentation guide* is a line that run down along the last indentation level of the current line.
 - *Stack indentation guide* is a line that run down along each indentation level that comes before the active indentation level.
+
+**Q** How can I configure the settings for specific languages?  
+**A** Every settings Guides provided can be configured on each language. You can configured the settings by adding "Language ID" to the end of the settings you want to configure. For example...
+
+Disable active indentation guides for JavaScript files  
+Set `guides.active.enabled.javascript` to `false`
+
+Change thickness of normal indentation guides for JSON files  
+Set `guides.active.enabled.json` to `5`
+
+You can check the Language ID by open the language mode dialog, the Language ID will be surrounded by parentheses.
 
 **Q:** License?  
 **A:** MIT
