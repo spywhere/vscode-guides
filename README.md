@@ -119,7 +119,7 @@ Disable active indentation guides for JavaScript files
 Set `guides.active.enabled.javascript` to `false`
 
 Change thickness of normal indentation guides for JSON files  
-Set `guides.active.enabled.json` to `5`
+Set `guides.normal.width.json` to `5`
 
 You can check the Language ID by open the language mode dialog, the Language ID will be surrounded by parentheses.
 
