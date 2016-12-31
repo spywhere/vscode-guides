@@ -1,6 +1,5 @@
 "use strict";
 import * as vscode from "vscode";
-import * as os from "os";
 import * as request from "request";
 import * as querystring from "querystring";
 
@@ -727,8 +726,8 @@ class Guides {
                 "spywhere.guides"
             ).packageJSON["version"],
             "vscode_version": vscode.version,
-            "platform": os.platform(),
-            "architecture": os.arch(),
+            "platform": process.platform,
+            "architecture": process.arch,
             "startup_time": startupTime.toFixed(3) + "s"
         });
 
