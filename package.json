@@ -102,6 +102,15 @@
             false
           ]
         },
+        "guides.active.gutter": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable active indentation region indicator in the gutter area in addition to normal indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
         "guides.active.enabled": {
           "type": "boolean",
           "default": true,

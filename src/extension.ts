@@ -2,6 +2,7 @@
 import * as vscode from "vscode";
 import * as request from "request";
 import * as querystring from "querystring";
+import * as path from "path";
 
 export function activate(context: vscode.ExtensionContext) {
     let guides = new Guides();
@@ -116,10 +117,12 @@ interface GuidesRange {
 }
 
 class Guides {
-    private indentGuideDecor: vscode.TextEditorDecorationType;
-    private activeGuideDecor: vscode.TextEditorDecorationType;
-    private stackGuideDecor: vscode.TextEditorDecorationType;
-    private indentBackgroundDecors: Array<vscode.TextEditorDecorationType>;
+    private gutterOpenDecor?: vscode.TextEditorDecorationType;
+    private gutterCloseDecor?: vscode.TextEditorDecorationType;
+    private indentGuideDecor?: vscode.TextEditorDecorationType;
+    private activeGuideDecor?: vscode.TextEditorDecorationType;
+    private stackGuideDecor?: vscode.TextEditorDecorationType;
+    private indentBackgroundDecors?: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion = {
         "guide": false
@@ -132,11 +135,11 @@ class Guides {
     private configurations: vscode.WorkspaceConfiguration;
 
     private startupTimer = Date.now();
-    private startupStop = null;
+    private startupStop?: number;
     private retryTimer = Date.now();
     private retryDuration = 300;
     private timerDelay = 0.1;
-    private updateTimer: NodeJS.Timer = null;
+    private updateTimer?: NodeJS.Timer;
     private sendStats = false;
     private fallbackIndentSize = 4;
 
@@ -152,8 +155,14 @@ class Guides {
     }
 
     dispose(){
-        if(this.updateTimer !== null){
+        if(this.updateTimer !== undefined){
             clearTimeout(this.updateTimer);
+        }
+        if(this.gutterOpenDecor){
+            this.gutterOpenDecor.dispose();
+        }
+        if(this.gutterCloseDecor){
+            this.gutterCloseDecor.dispose();
         }
         if(this.indentGuideDecor){
             this.indentGuideDecor.dispose();
@@ -254,6 +263,39 @@ class Guides {
             "stack", overrideStyle
         );
 
+        if (this.getConfig<boolean>("active.gutter")) {
+            this.gutterOpenDecor = vscode.window.createTextEditorDecorationType(
+                {
+                    light: {
+                        gutterIconPath: path.join(
+                            __dirname, "..", "gutters", "open-light.png"
+                        ),
+                    },
+                    dark: {
+                        gutterIconPath: path.join(
+                            __dirname, "..", "gutters", "open-dark.png"
+                        ),
+                    },
+                    gutterIconSize: "contain"
+                }
+            );
+            this.gutterCloseDecor = vscode.window.createTextEditorDecorationType(
+                {
+                    light: {
+                        gutterIconPath: path.join(
+                            __dirname, "..", "gutters", "close-light.png"
+                        ),
+                    },
+                    dark: {
+                        gutterIconPath: path.join(
+                            __dirname, "..", "gutters", "close-dark.png"
+                        ),
+                    },
+                    gutterIconSize: "contain"
+                }
+            );
+        }
+
         if(
             this.getConfig<number[]>("rulers", []).length > 0 &&
             !this.hasWarnDeprecation["ruler"]
@@ -274,7 +316,7 @@ class Guides {
         ).trim();
 
         if(overrideStyle || borderStyle.toLowerCase() === "none"){
-            return null;
+            return undefined;
         }
 
         let options: vscode.DecorationRenderOptions = {
@@ -302,7 +344,7 @@ class Guides {
 
     getOptionVariants(settingsKey: string) : OptionVariant<string> {
         let baseValue = this.getConfig<string>(
-            settingsKey, null
+            settingsKey, undefined
         );
         let darkValue = this.getConfig<string>(
             settingsKey + ".dark"
@@ -327,6 +369,12 @@ class Guides {
                     editor.setDecorations(decoration, []);
                 });
             }
+            if(this.gutterOpenDecor){
+                editor.setDecorations(this.gutterOpenDecor, []);
+            }
+            if(this.gutterCloseDecor){
+                editor.setDecorations(this.gutterCloseDecor, []);
+            }
             if(this.indentGuideDecor){
                 editor.setDecorations(this.indentGuideDecor, []);
             }
@@ -340,11 +388,11 @@ class Guides {
     }
 
     setNeedsUpdateEditor(editor: vscode.TextEditor){
-        if(this.updateTimer !== null){
+        if(this.updateTimer !== undefined){
             return;
         }
         this.updateTimer = setTimeout(() => {
-            this.updateTimer = null;
+            this.updateTimer = undefined;
             this.updateEditor(editor);
         }, this.timerDelay * 1000);
     }
@@ -376,11 +424,16 @@ class Guides {
         let primaryRanges = this.getRangesForLine(
             editor, cursorPosition.line, maxLevel
         );
-        let stillActive = (
+        let lastTopActive = cursorPosition.line;
+        let lastBottomActive = cursorPosition.line;
+        let keepActive = (
             primaryRanges.activeLevel >= 0 &&
             primaryRanges.topActive &&
             editor.selection.isEmpty &&
-            editor.selections.length == 1 &&
+            editor.selections.length == 1
+        );
+        let stillActive = (
+            keepActive &&
             this.getConfig<boolean>(
                 "active.enabled"
             )
@@ -452,6 +505,10 @@ class Guides {
                     );
                 }
             }else if(primaryRanges.activeLevel !== ranges.activeLevel){
+                if (lastTopActive > line && keepActive) {
+                    lastTopActive = line;
+                }
+                keepActive = false;
                 stillActive = false;
             }
             if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
@@ -460,11 +517,14 @@ class Guides {
         }
 
         // Search through lower ranges
-        stillActive = (
+        keepActive = (
             primaryRanges.activeLevel >= 0 &&
             primaryRanges.bottomActive &&
             editor.selection.isEmpty &&
-            editor.selections.length == 1 &&
+            editor.selections.length == 1
+        );
+        stillActive = (
+            keepActive &&
             this.getConfig<boolean>(
                 "active.enabled"
             )
@@ -502,6 +562,10 @@ class Guides {
                     );
                 }
             }else if(primaryRanges.activeLevel !== ranges.activeLevel){
+                if (lastBottomActive < line && keepActive) {
+                    lastBottomActive = line;
+                }
+                keepActive = false;
                 stillActive = false;
             }
             if(ranges.maxLevel > 0 && ranges.maxLevel < lastActiveLevel){
@@ -520,6 +584,28 @@ class Guides {
                 return stopPoint.range;
             }));
         });
+        if(this.gutterOpenDecor){
+            editor.setDecorations(
+                this.gutterOpenDecor,
+                (
+                    lastTopActive !== lastBottomActive ?
+                    [new vscode.Range(
+                        lastTopActive, 0, lastTopActive, 0
+                    )] : []
+                )
+            );
+        }
+        if(this.gutterCloseDecor){
+            editor.setDecorations(
+                this.gutterCloseDecor,
+                (
+                    lastTopActive !== lastBottomActive ?
+                    [new vscode.Range(
+                        lastBottomActive, 0, lastBottomActive, 0
+                    )] : []
+                )
+            );
+        }
         if(this.indentGuideDecor){
             editor.setDecorations(this.indentGuideDecor, indentGuideRanges);
         }
@@ -534,7 +620,7 @@ class Guides {
     getRangesForLine(editor: vscode.TextEditor, lineNumber: number,
                      maxLevel: number, activeLevel: number = -1,
                      lastActiveLevel: number = -1) : GuidesRange {
-        let activeGuideRange: vscode.Range = null;
+        let activeGuideRange: vscode.Range | undefined;
         let indentGuideRanges: vscode.Range[] = [];
         let stackGuideRanges: vscode.Range[] = [];
         let indentBackgrounds: GuidesBackground[] = [];
@@ -543,7 +629,7 @@ class Guides {
             editor.document.lineAt(lineNumber),
             editor.options.tabSize as number || this.fallbackIndentSize
         );
-        let empty = guidelines === null;
+        let empty = guidelines === undefined;
         if(empty){
             guidelines = [];
         }
@@ -653,7 +739,7 @@ class Guides {
             lastPosition = position;
         });
 
-        if(!empty && activeGuideRange === null && !topActive && !bottomActive){
+        if(!empty && !activeGuideRange && !topActive && !bottomActive){
             activeLevel = -1;
         }
 
@@ -701,7 +787,7 @@ class Guides {
 
     getGuides(line: vscode.TextLine, indentSize: number){
         if(line.isEmptyOrWhitespace){
-            return null;
+            return undefined;
         }
         let pattern = new RegExp(
             ` {${indentSize}}| {0,${indentSize - 1}}\t`,
@@ -747,7 +833,7 @@ class Guides {
     sendUsagesAndStats(){
         // Want to see this data?
         //   There! http://stats.digitalparticle.com/
-        if(this.startupStop === null){
+        if(this.startupStop === undefined){
             this.startupStop = Date.now();
         }
         if(this.retryTimer - Date.now() > 0){

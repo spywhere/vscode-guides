@@ -52,8 +52,14 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Hide normal indentation guides in selections.
 "guides.normal.hideOnSelection": true,
 
+// Enable active indentation region indicator in the gutter area in addition to normal indentation guides.
+"guides.active.gutter": false,
+
 // Enable active indentation guides in addition to normal indentation guides.
 "guides.active.enabled": true,
+
+// Expand active indentation guides on the bracket's line.
+"guides.active.expandBrackets": true,
 
 // Active indentation guides rendering width.
 "guides.active.width": 1,
