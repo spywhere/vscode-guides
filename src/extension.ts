@@ -43,15 +43,19 @@ class GuidesController {
         let shouldUpdate = true;
         if(event.selections.length === 1){
             let selection = event.selections[0];
+            let textLine = event.textEditor.document.lineAt(
+                selection.active.line
+            );
+
             if(
                 this.lastSelection &&
                 ((
                     // If the cursor is on the same line and placed after the
-                    //   first non-whitespace character
+                    //   first non-whitespace character, but not on the
+                    //   last character
                     selection.active.line === this.lastSelection.active.line &&
-                    event.textEditor.document.lineAt(
-                        selection.active.line
-                    ).firstNonWhitespaceCharacterIndex <
+                    selection.active.character !== textLine.text.length &&
+                    textLine.firstNonWhitespaceCharacterIndex <
                     selection.active.character - 1
                 ) || (
                     // If the cursor just move to the line above/below and the
@@ -60,9 +64,7 @@ class GuidesController {
                     Math.abs(
                         selection.active.line - this.lastSelection.active.line
                     ) === 1 &&
-                    event.textEditor.document.lineAt(
-                        selection.active.line
-                    ).firstNonWhitespaceCharacterIndex ===
+                    textLine.firstNonWhitespaceCharacterIndex ===
                     event.textEditor.document.lineAt(
                         this.lastSelection.active.line
                     ).firstNonWhitespaceCharacterIndex
@@ -109,6 +111,8 @@ interface GuidesRange {
     activeGuideRange: vscode.Range;
     stackGuideRanges: vscode.Range[];
     maxLevel: number;
+    topActive: boolean;
+    bottomActive: boolean;
 }
 
 class Guides {
@@ -373,7 +377,8 @@ class Guides {
             editor, cursorPosition.line, maxLevel
         );
         let stillActive = (
-            primaryRanges.activeGuideRange !== null &&
+            primaryRanges.activeLevel >= 0 &&
+            primaryRanges.topActive &&
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
             this.getConfig<boolean>(
@@ -456,7 +461,8 @@ class Guides {
 
         // Search through lower ranges
         stillActive = (
-            primaryRanges.activeGuideRange !== null &&
+            primaryRanges.activeLevel >= 0 &&
+            primaryRanges.bottomActive &&
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
             this.getConfig<boolean>(
@@ -542,6 +548,8 @@ class Guides {
             guidelines = [];
         }
         let totalNonNormalGuides = 0;
+        let topActive = false;
+        let bottomActive = false;
         if(activeLevel === -1){
             for (let index = guidelines.length - 1; index >= 0; index--) {
                 let guide = guidelines[index];
@@ -556,6 +564,28 @@ class Guides {
                 activeLevel = -2;
             }else{
                 activeLevel += totalNonNormalGuides;
+            }
+
+            let lineText = editor.document.lineAt(lineNumber).text;
+            let position = editor.selection.active.character;
+            let lastCharacter = (
+                position <= lineText.length ?
+                lineText[position - 1] : ""
+            );
+
+            if (
+                this.getConfig<boolean>("active.expandBrackets") &&
+                lastCharacter !== ""
+            ) {
+                bottomActive = "([{".split("").some(character => {
+                    return lineText[position - 1] === character;
+                });
+                topActive = "}])".split("").some(character => {
+                    return lineText[position - 1] === character;
+                });
+                if (bottomActive || topActive) {
+                    activeLevel += 1;
+                }
             }
         }
 
@@ -595,6 +625,8 @@ class Guides {
                         )
                     )){
                         activeGuideRange = new vscode.Range(position, position);
+                        topActive = true;
+                        bottomActive = true;
                     }else if(normalGuideIndex < lastActiveLevel && (
                         !inSelection || (inSelection &&
                             !this.getConfig<boolean>(
@@ -621,7 +653,7 @@ class Guides {
             lastPosition = position;
         });
 
-        if(!empty && activeGuideRange === null){
+        if(!empty && activeGuideRange === null && !topActive && !bottomActive){
             activeLevel = -1;
         }
 
@@ -631,7 +663,9 @@ class Guides {
             activeLevel: activeLevel,
             activeGuideRange: activeGuideRange,
             stackGuideRanges: stackGuideRanges,
-            maxLevel: guidelines.length
+            maxLevel: guidelines.length,
+            topActive: topActive,
+            bottomActive: bottomActive
         };
     }
 
@@ -653,7 +687,9 @@ class Guides {
             stackGuideRanges: ranges.stackGuideRanges.map(guide => {
                 return this.adjustRangeForLine(guide, lineNumber);
             }),
-            maxLevel: ranges.maxLevel
+            maxLevel: ranges.maxLevel,
+            topActive: true,
+            bottomActive: true
         };
     }
 
@@ -693,7 +729,7 @@ class Guides {
         }
         let index = 0;
         for(
-            let indentLevel=0;
+            let indentLevel = 0;
             indentLevel < singleMatch.length;
             indentLevel++
         ){

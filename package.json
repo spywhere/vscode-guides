@@ -2,7 +2,7 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
@@ -106,6 +106,15 @@
           "type": "boolean",
           "default": true,
           "description": "Enable active indentation guides in addition to normal indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.active.expandBrackets": {
+          "type": "boolean",
+          "default": true,
+          "description": "Expand active indentation guides on the bracket's line.",
           "enum": [
             true,
             false
