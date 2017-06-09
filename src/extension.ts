@@ -352,7 +352,7 @@ class Guides {
         let lightValue = this.getConfig<string>(
             settingsKey + ".light"
         );
-        if(!baseValue){
+        if(!baseValue || typeof(baseValue) !== "string"){
             baseValue = darkValue || lightValue;
         }
         return {
