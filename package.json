@@ -2,7 +2,7 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
@@ -57,6 +57,15 @@
           "type": "boolean",
           "default": true,
           "description": "Show start-of-line indentation guides.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.normal.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable normal indentation guides.",
           "enum": [
             true,
             false
@@ -164,6 +173,15 @@
           "type": "boolean",
           "default": true,
           "description": "Hide active indentation guides in selections.",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "guides.active.extraIndent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Shift active indentations by a level. This will also render an extra indentation guide.",
           "enum": [
             true,
             false

@@ -236,14 +236,32 @@ class Guides {
         });
 
         this.indentGuideDecor = this.createTextEditorDecorationFromKey(
-            "normal", overrideStyle
+            "normal", overrideStyle || !this.configurations.get<boolean>(
+                "normal.enabled"
+            )
         );
         this.activeGuideDecor = this.createTextEditorDecorationFromKey(
-            "active", overrideStyle
+            "active", overrideStyle || !this.configurations.get<boolean>(
+                "active.enabled"
+            )
         );
         this.stackGuideDecor = this.createTextEditorDecorationFromKey(
-            "stack", overrideStyle
+            "stack", overrideStyle || !this.configurations.get<boolean>(
+                "stack.enabled"
+            )
         );
+
+        if (
+            !this.indentGuideDecor &&
+            !this.activeGuideDecor &&
+            !this.stackGuideDecor
+        ) {
+            vscode.window.showWarningMessage(
+                "Guides extension has detected that there is no " +
+                "indentation guide enabled, either by disable or set the " +
+                "style to \"none\"."
+            );
+        }
 
         if (this.configurations.get<boolean>("active.gutter")) {
             this.gutterOpenDecor = vscode.window.createTextEditorDecorationType(
@@ -344,7 +362,7 @@ class Guides {
                 "Guides extension will no longer supports base " +
                 "configurations in an upcoming version. Guides extension " +
                 "kindly suggests that you use theme-specific configurations "+
-                "(such as `.dark` or `.light`) rather than using base " +
+                "(such as \".dark\" or \".light\") rather than using base " +
                 "configurations."
             );
         }
@@ -634,6 +652,11 @@ class Guides {
                 let guide = guidelines[index];
                 if(guide.type === "normal"){
                     activeLevel = index;
+                    if (
+                        this.configurations.get<boolean>("active.extraIndent")
+                    ) {
+                        activeLevel += 1;
+                    }
                     break;
                 }else{
                     totalNonNormalGuides += 1;
@@ -653,6 +676,7 @@ class Guides {
             );
 
             if (
+                activeLevel >= 0 &&
                 this.configurations.get<boolean>("active.expandBrackets") &&
                 lastCharacter !== ""
             ) {
@@ -694,7 +718,11 @@ class Guides {
                         )
                     });
                 }
-                if(guideline.type === "normal"){
+                let types = ["normal"];
+                if (this.configurations.get<boolean>("active.extraIndent")) {
+                    types.push("extra");
+                }
+                if(types.some(type => guideline.type === type)){
                     normalGuideIndex += 1;
                     if(normalGuideIndex === activeLevel && (
                         !inSelection || (inSelection &&

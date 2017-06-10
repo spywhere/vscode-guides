@@ -37,6 +37,9 @@ Simply install the extension, Guides should do it job right away (after restart)
 // Show start-of-line indentation guides.
 "guides.indent.showFirstIndentGuides": true,
 
+// Enable normal indentation guides.
+"guides.normal.enabled": true,
+
 // Normal indentation guides rendering width.
 "guides.normal.width": 1,
 
@@ -75,6 +78,9 @@ Simply install the extension, Guides should do it job right away (after restart)
 
 // Hide active indentation guides in selections.
 "guides.active.hideOnSelection": true,
+
+// Shift active indentations by a level. This will also render an extra indentation guide.
+"guides.active.extraIndent": false,
 
 // Enable stack indentation guides in addition to normal indentation guides.
 "guides.stack.enabled": true,
