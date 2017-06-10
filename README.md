@@ -118,16 +118,5 @@ Since Visual Studio Code API does not provide the API for drawing line on empty 
 - *Active indentation guide* is a line that run down along the last indentation level of the current line.
 - *Stack indentation guide* is a line that run down along each indentation level that comes before the active indentation level.
 
-**Q** How can I configure the settings for specific languages?  
-**A** Every settings Guides provided can be configured on each language. You can configured the settings by adding "Language ID" to the end of the settings you want to configure. For example...
-
-Disable active indentation guides for JavaScript files  
-Set `guides.active.enabled.javascript` to `false`
-
-Change thickness of normal indentation guides for JSON files  
-Set `guides.normal.width.json` to `5`
-
-You can check the Language ID by open the language mode dialog, the Language ID will be surrounded by parentheses.
-
 **Q:** License?  
 **A:** MIT

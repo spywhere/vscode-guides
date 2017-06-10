@@ -125,11 +125,12 @@ class Guides {
     private indentBackgroundDecors?: Array<vscode.TextEditorDecorationType>;
 
     private hasShowSuggestion = {
-        "guide": false
+        guide: false
     };
 
     private hasWarnDeprecation = {
-        "ruler": false
+        ruler: false,
+        baseSettings: false
     };
 
     private configurations: vscode.WorkspaceConfiguration;
@@ -175,29 +176,10 @@ class Guides {
         }
     }
 
-    getConfig<T>(section: string, defaultValue?: T): T {
-        let editor = vscode.window.activeTextEditor;
-        let configValue = this.configurations.get<T>(section, defaultValue);
-
-        if(!editor){
-            return configValue;
-        }
-
-        let editorConfigSection = `${section}.${editor.document.languageId}`;
-
-        if(!this.configurations.has(editorConfigSection)){
-            return configValue;
-        }
-
-        return this.configurations.get<T>(
-            `${section}.${editor.document.languageId}`, configValue
-        );
-    }
-
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
 
-        this.sendStats = !this.getConfig<boolean>("sendUsagesAndStats");
+        this.sendStats = !this.configurations.get<boolean>("sendUsagesAndStats");
 
         let indentSettingNames = [{
             name: "renderIndentGuides",
@@ -211,7 +193,7 @@ class Guides {
             patch: 1
         }];
         let lastIndex = 0;
-        let overrideStyle  = !this.getConfig<boolean>(
+        let overrideStyle  = !this.configurations.get<boolean>(
             "overrideDefault"
         ) && indentSettingNames.some(
             (settings, index) => {
@@ -226,10 +208,10 @@ class Guides {
 
         if(
             overrideStyle &&
-            !this.hasShowSuggestion["guide"]
+            !this.hasShowSuggestion.guide
         ){
             let settings = indentSettingNames[lastIndex];
-            this.hasShowSuggestion["guide"] = true;
+            this.hasShowSuggestion.guide = true;
             vscode.window.showWarningMessage(
                 "Guides extension has detected that you are using " +
                 "\"editor." + settings.name + "\" settings. " +
@@ -238,11 +220,11 @@ class Guides {
             );
         }
 
-        this.timerDelay = this.getConfig<number>("updateDelay");
+        this.timerDelay = this.configurations.get<number>("updateDelay");
         this.indentBackgroundDecors = [];
-        this.getConfig<any>(
+        this.configurations.get<string[]>(
             "normal.backgrounds",
-            this.getConfig<any>(
+            this.configurations.get<string[]>(
                 "indent.backgrounds"
             )
         ).forEach((backgroundColor) => {
@@ -263,7 +245,7 @@ class Guides {
             "stack", overrideStyle
         );
 
-        if (this.getConfig<boolean>("active.gutter")) {
+        if (this.configurations.get<boolean>("active.gutter")) {
             this.gutterOpenDecor = vscode.window.createTextEditorDecorationType(
                 {
                     light: {
@@ -297,10 +279,10 @@ class Guides {
         }
 
         if(
-            this.getConfig<number[]>("rulers", []).length > 0 &&
-            !this.hasWarnDeprecation["ruler"]
+            this.configurations.get<number[]>("rulers", []).length > 0 &&
+            !this.hasWarnDeprecation.ruler
         ){
-            this.hasWarnDeprecation["ruler"] = true;
+            this.hasWarnDeprecation.ruler = true;
             vscode.window.showWarningMessage(
                 "Guides extension no longer supports ruler since Visual " +
                 "Studio Code has built-in ruler feature. Guides extension " +
@@ -311,7 +293,7 @@ class Guides {
     }
 
     createTextEditorDecorationFromKey(settingsKey: string, overrideStyle=false){
-        let borderStyle = this.getConfig<string>(
+        let borderStyle = this.configurations.get<string>(
             settingsKey + ".style"
         ).trim();
 
@@ -321,7 +303,7 @@ class Guides {
 
         let options: vscode.DecorationRenderOptions = {
             borderWidth: `0px 0px 0px ${
-                this.getConfig<number>(settingsKey + ".width")
+                this.configurations.get<number>(settingsKey + ".width")
             }px`,
             borderStyle: borderStyle
         };
@@ -343,17 +325,28 @@ class Guides {
     }
 
     getOptionVariants(settingsKey: string) : OptionVariant<string> {
-        let baseValue = this.getConfig<string>(
+        let baseValue = this.configurations.get<string>(
             settingsKey, undefined
         );
-        let darkValue = this.getConfig<string>(
+        let darkValue = this.configurations.get<string>(
             settingsKey + ".dark"
         );
-        let lightValue = this.getConfig<string>(
+        let lightValue = this.configurations.get<string>(
             settingsKey + ".light"
         );
         if(!baseValue || typeof(baseValue) !== "string"){
             baseValue = darkValue || lightValue;
+        }else if(
+            !this.hasWarnDeprecation.baseSettings
+        ){
+            this.hasWarnDeprecation.baseSettings = true;
+            vscode.window.showWarningMessage(
+                "Guides extension will no longer supports base " +
+                "configurations in an upcoming version. Guides extension " +
+                "kindly suggests that you use theme-specific configurations "+
+                "(such as `.dark` or `.light`) rather than using base " +
+                "configurations."
+            );
         }
         return {
             baseValue: baseValue,
@@ -434,14 +427,14 @@ class Guides {
         );
         let stillActive = (
             keepActive &&
-            this.getConfig<boolean>(
+            this.configurations.get<boolean>(
                 "active.enabled"
             )
         );
         let shouldStack = (
             editor.selection.isEmpty &&
             editor.selections.length == 1 &&
-            this.getConfig<boolean>(
+            this.configurations.get<boolean>(
                 "stack.enabled"
             )
         );
@@ -525,7 +518,7 @@ class Guides {
         );
         stillActive = (
             keepActive &&
-            this.getConfig<boolean>(
+            this.configurations.get<boolean>(
                 "active.enabled"
             )
         );
@@ -660,7 +653,7 @@ class Guides {
             );
 
             if (
-                this.getConfig<boolean>("active.expandBrackets") &&
+                this.configurations.get<boolean>("active.expandBrackets") &&
                 lastCharacter !== ""
             ) {
                 bottomActive = "([{".split("").some(character => {
@@ -690,7 +683,7 @@ class Guides {
                 // Add background color stop points if there are colors
                 if(maxLevel > 0 && (!inSelection || (
                     inSelection &&
-                    !this.getConfig<boolean>(
+                    !this.configurations.get<boolean>(
                         "indent.hideBackgroundOnSelection"
                     )
                 ))){
@@ -705,7 +698,7 @@ class Guides {
                     normalGuideIndex += 1;
                     if(normalGuideIndex === activeLevel && (
                         !inSelection || (inSelection &&
-                            !this.getConfig<boolean>(
+                            !this.configurations.get<boolean>(
                                 "active.hideOnSelection"
                             )
                         )
@@ -715,7 +708,7 @@ class Guides {
                         bottomActive = true;
                     }else if(normalGuideIndex < lastActiveLevel && (
                         !inSelection || (inSelection &&
-                            !this.getConfig<boolean>(
+                            !this.configurations.get<boolean>(
                                 "stack.hideOnSelection"
                             )
                         )
@@ -725,7 +718,7 @@ class Guides {
                         );
                     }else if(normalGuideIndex !== activeLevel && (
                         !inSelection || (inSelection &&
-                            !this.getConfig<boolean>(
+                            !this.configurations.get<boolean>(
                                 "normal.hideOnSelection"
                             )
                         )
@@ -804,7 +797,7 @@ class Guides {
             return guides;
         }
         if(
-            this.getConfig<boolean>(
+            this.configurations.get<boolean>(
                 "indent.showFirstIndentGuides"
             )
         ){
