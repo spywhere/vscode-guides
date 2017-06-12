@@ -863,55 +863,60 @@ class Guides {
         }
         console.log("[Guides] Sending usage statistics...");
         let startupTime = (this.startupStop - this.startupTimer) / 1000.0;
-        let data = querystring.stringify({
+        let data = {
+            "schema": 1,
             "name": "guides",
-            "schema": "0.1",
             "version": vscode.extensions.getExtension(
                 "spywhere.guides"
             ).packageJSON["version"],
             "vscode_version": vscode.version,
             "platform": process.platform,
             "architecture": process.arch,
-            "startup_time": startupTime.toFixed(3) + "s"
-        });
+            "startup_time": parseFloat(startupTime.toFixed(3))
+        };
 
-        request(
-            "http://api.digitalparticle.com/1/stats?" + data,
-            (error, response, data) => {
-                if(error){
-                    this.sendStats = false;
-                    console.log(
-                        "[Guides] Error while sending usage statistics: " +
-                        error
-                    );
-                }else if(response.statusCode != 200){
-                    this.sendStats = false;
-                    console.log(
-                        "[Guides] Error while sending usage statistics: " +
-                        "ErrorCode " + response.statusCode
-                    );
-                }else if(data.toLowerCase() !== "finished"){
-                    this.sendStats = false;
-                    console.log(
-                        "[Guides] Error while sending usage statistics: " +
-                        data
-                    );
-                }else{
-                    console.log(
-                        "[Guides] Usage statistics has successfully sent"
-                    );
-                }
-                if(!this.sendStats){
-                    this.retryTimer = Date.now() + this.retryDuration * 1000;
-                    console.log(
-                        "[Guides] Usage statistics will retry in the next " +
-                        (this.retryDuration / 60) +
-                        " minutes"
-                    );
-                    this.retryDuration *= 2;
-                }
+        request({
+            uri: (
+                "https://us-central1-open-source-telemetry." +
+                "cloudfunctions.net/submitGuides"
+            ),
+            method: "POST",
+            body: data,
+            json: true
+        }, (error, response, data) => {
+            if(error){
+                this.sendStats = false;
+                console.log(
+                    "[Guides] Error while sending usage statistics: " +
+                    error
+                );
+            }else if(response.statusCode !== 200){
+                this.sendStats = false;
+                console.log(
+                    "[Guides] Error while sending usage statistics: " +
+                    "ErrorCode " + response.statusCode
+                );
+            }else if(!data || data["error"]){
+                this.sendStats = false;
+                console.log(
+                    "[Guides] Error while sending usage statistics: " +
+                    data
+                );
+            }else{
+                console.log(
+                    "[Guides] Usage statistics has successfully sent"
+                );
             }
-        );
+            if(!this.sendStats){
+                this.retryTimer = Date.now() + this.retryDuration * 1000;
+                console.log(
+                    "[Guides] Usage statistics will retry in the next " +
+                    (this.retryDuration / 60) +
+                    " minutes"
+                );
+                this.retryDuration *= 2;
+            }
+        });
     }
 
     isEqualOrNewerVersionThan(major: number, minor: number, patch: number){
