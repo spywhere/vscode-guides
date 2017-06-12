@@ -252,6 +252,7 @@ class Guides {
         );
 
         if (
+            !overrideStyle &&
             !this.indentGuideDecor &&
             !this.activeGuideDecor &&
             !this.stackGuideDecor
