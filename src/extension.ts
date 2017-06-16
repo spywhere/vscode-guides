@@ -99,6 +99,7 @@ class GuidesController {
 }
 
 interface OptionVariant<T> {
+    baseValue: T;
     darkValue: T;
     lightValue: T;
 }
@@ -372,6 +373,7 @@ class Guides {
 
         let colorVariant = this.getOptionVariants(settingsKey + ".color");
 
+        options.borderColor = colorVariant.baseValue;
         if(colorVariant.darkValue){
             options.dark = {
                 borderColor: colorVariant.darkValue
@@ -393,6 +395,7 @@ class Guides {
             settingsKey + ".light"
         );
         return {
+            baseValue: lightValue || darkValue,
             darkValue: darkValue,
             lightValue: lightValue
         };
