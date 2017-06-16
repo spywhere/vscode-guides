@@ -99,7 +99,6 @@ class GuidesController {
 }
 
 interface OptionVariant<T> {
-    baseValue: T;
     darkValue: T;
     lightValue: T;
 }
@@ -373,7 +372,6 @@ class Guides {
 
         let colorVariant = this.getOptionVariants(settingsKey + ".color");
 
-        options.borderColor = colorVariant.baseValue;
         if(colorVariant.darkValue){
             options.dark = {
                 borderColor: colorVariant.darkValue
@@ -388,31 +386,13 @@ class Guides {
     }
 
     getOptionVariants(settingsKey: string) : OptionVariant<string> {
-        let baseValue = this.configurations.get<string>(
-            settingsKey, undefined
-        );
         let darkValue = this.configurations.get<string>(
             settingsKey + ".dark"
         );
         let lightValue = this.configurations.get<string>(
             settingsKey + ".light"
         );
-        if(!baseValue || typeof(baseValue) !== "string"){
-            baseValue = darkValue || lightValue;
-        }else if(
-            !this.hasWarnDeprecation.baseSettings
-        ){
-            this.hasWarnDeprecation.baseSettings = true;
-            vscode.window.showWarningMessage(
-                "Guides extension will no longer supports base " +
-                "configurations in an upcoming version. Guides extension " +
-                "kindly suggests that you use theme-specific configurations "+
-                "(such as \".dark\" or \".light\") rather than using base " +
-                "configurations."
-            );
-        }
         return {
-            baseValue: baseValue,
             darkValue: darkValue,
             lightValue: lightValue
         };
