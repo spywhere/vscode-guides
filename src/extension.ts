@@ -10,6 +10,10 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(guides);
 }
 
+interface ActionItem extends vscode.MessageItem {
+    action?: () => void;
+}
+
 class GuidesController {
     private guides: Guides;
     private disposable: vscode.Disposable;
@@ -117,6 +121,7 @@ interface GuidesRange {
 }
 
 class Guides {
+    private enabled = true;
     private gutterOpenDecor?: vscode.TextEditorDecorationType;
     private gutterCloseDecor?: vscode.TextEditorDecorationType;
     private indentGuideDecor?: vscode.TextEditorDecorationType;
@@ -176,10 +181,25 @@ class Guides {
         }
     }
 
+    handleMessage(promise: Thenable<ActionItem>){
+        promise.then((item) => {
+            if (!item) {
+                return;
+            }
+            if (item.action) {
+                item.action();
+                this.updateEditors();
+            }
+        });
+    }
+
     loadSettings(){
         this.configurations = vscode.workspace.getConfiguration("guides");
+        this.enabled = this.configurations.get<boolean>("enabled");
 
-        this.sendStats = !this.configurations.get<boolean>("sendUsagesAndStats");
+        this.sendStats = !this.configurations.get<boolean>(
+            "sendUsagesAndStats"
+        );
 
         let indentSettingNames = [{
             name: "renderIndentGuides",
@@ -207,17 +227,37 @@ class Guides {
         );
 
         if(
+            this.enabled &&
             overrideStyle &&
             !this.hasShowSuggestion.guide
         ){
             let settings = indentSettingNames[lastIndex];
             this.hasShowSuggestion.guide = true;
-            vscode.window.showWarningMessage(
+            this.handleMessage(vscode.window.showWarningMessage<ActionItem>(
                 "Guides extension has detected that you are using " +
                 "\"editor." + settings.name + "\" settings. " +
                 "Guides will now disable all indentation guides by "+
-                "override the style to \"none\"."
-            );
+                "override the style to \"none\".", {
+                    title: "Use Guides",
+                    action: () => {
+                        vscode.workspace.getConfiguration("editor").update(
+                            settings.name, false, true
+                        );
+                    },
+                    isCloseAffordance: true
+                }, {
+                    title: "Use built-in",
+                    isCloseAffordance: true
+                }, {
+                    title: "Always use built-in",
+                    action: () => {
+                        vscode.workspace.getConfiguration("guides").update(
+                            "enabled", false, true
+                        );
+                    },
+                    isCloseAffordance: true
+                }
+            ));
         }
 
         this.timerDelay = this.configurations.get<number>("updateDelay");
@@ -236,22 +276,26 @@ class Guides {
         });
 
         this.indentGuideDecor = this.createTextEditorDecorationFromKey(
-            "normal", overrideStyle || !this.configurations.get<boolean>(
+            "normal",
+            !this.enabled || overrideStyle || !this.configurations.get<boolean>(
                 "normal.enabled"
             )
         );
         this.activeGuideDecor = this.createTextEditorDecorationFromKey(
-            "active", overrideStyle || !this.configurations.get<boolean>(
+            "active",
+            !this.enabled || overrideStyle || !this.configurations.get<boolean>(
                 "active.enabled"
             )
         );
         this.stackGuideDecor = this.createTextEditorDecorationFromKey(
-            "stack", overrideStyle || !this.configurations.get<boolean>(
+            "stack",
+            !this.enabled || overrideStyle || !this.configurations.get<boolean>(
                 "stack.enabled"
             )
         );
 
         if (
+            this.enabled &&
             !overrideStyle &&
             !this.indentGuideDecor &&
             !this.activeGuideDecor &&
@@ -264,7 +308,7 @@ class Guides {
             );
         }
 
-        if (this.configurations.get<boolean>("active.gutter")) {
+        if (this.enabled && this.configurations.get<boolean>("active.gutter")) {
             this.gutterOpenDecor = vscode.window.createTextEditorDecorationType(
                 {
                     light: {
@@ -422,7 +466,7 @@ class Guides {
         }
         // If no editor set, do nothing
         //   This can occur when active editor is not set
-        if(!editor){
+        if(!this.enabled || !editor){
             return;
         }
 
