@@ -880,8 +880,6 @@ class Guides {
     }
 
     sendUsagesAndStats(){
-        // Want to see this data?
-        //   There! http://stats.digitalparticle.com/
         if(this.startupStop === undefined){
             this.startupStop = Date.now();
         }
@@ -903,10 +901,7 @@ class Guides {
         };
 
         request({
-            uri: (
-                "https://us-central1-open-source-telemetry." +
-                "cloudfunctions.net/submitGuides"
-            ),
+            uri: "https://api.digitalparticle.com/guides",
             method: "POST",
             body: data,
             json: true
