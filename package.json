@@ -2,7 +2,7 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
@@ -43,6 +43,12 @@
             true,
             false
           ]
+        },
+        "guides.limit.maximum": {
+          "type": "number",
+          "default": 500,
+          "description": "Maximum rendering boundary based on current cursor position. Set to -1 for no limit. Use floating point between 0-1 to determine from document size instead.",
+          "minimum": -1
         },
         "guides.indent.backgrounds": {
           "type": "array",

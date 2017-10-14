@@ -25,7 +25,11 @@ class GuidesController {
 
         let subscriptions: vscode.Disposable[] = [];
         vscode.window.onDidChangeTextEditorSelection(
-            this.updateSelection, this, subscriptions
+            (event) => this.updateSelection(
+                event,
+                guides.lineLimit < 0
+            ),
+            this, subscriptions
         );
         vscode.window.onDidChangeActiveTextEditor(
             this.updateActiveEditor, this, subscriptions
@@ -44,7 +48,10 @@ class GuidesController {
         this.disposable.dispose();
     }
 
-    private updateSelection(event: vscode.TextEditorSelectionChangeEvent){
+    private updateSelection(
+        event: vscode.TextEditorSelectionChangeEvent,
+        enableRelativeSelection: boolean
+    ){
         let shouldUpdate = true;
         if(event.selections.length === 1){
             let selection = event.selections[0];
@@ -72,7 +79,8 @@ class GuidesController {
                     textLine.firstNonWhitespaceCharacterIndex ===
                     event.textEditor.document.lineAt(
                         this.lastSelection.active.line
-                    ).firstNonWhitespaceCharacterIndex
+                    ).firstNonWhitespaceCharacterIndex &&
+                    enableRelativeSelection
                 ))
             ){
                 shouldUpdate = false;
@@ -148,6 +156,7 @@ class Guides {
     private updateTimer?: NodeJS.Timer;
     private sendStats = false;
     private fallbackIndentSize = 4;
+    lineLimit = 500;
 
     updateFallbackIndentSize(indentSize: number){
         this.fallbackIndentSize = indentSize || 4;
@@ -200,6 +209,8 @@ class Guides {
         this.sendStats = !this.configurations.get<boolean>(
             "sendUsagesAndStats"
         );
+
+        this.lineLimit = this.configurations.get<number>("limit.maximum");
 
         let indentSettingNames = [{
             name: "renderIndentGuides",
@@ -513,7 +524,19 @@ class Guides {
 
         // Search through upper ranges
         let lastActiveLevel = primaryRanges.activeLevel;
-        for(let line = cursorPosition.line - 1; line >= 0; line--){
+        let lineLimit = this.lineLimit;
+
+        if (lineLimit > 0 && lineLimit < 1) {
+            lineLimit = (editor.document.lineCount / 2) * lineLimit;
+        }
+
+        let startLine = cursorPosition.line - 1;
+        let endLine = 0;
+        if (lineLimit >= 0) {
+            endLine = Math.max(startLine - lineLimit + 1, 0);
+        }
+
+        for(let line = startLine; line >= endLine; line--){
             let ranges = this.getRangesForLine(
                 editor, line, maxLevel,
                 primaryRanges.activeLevel, lastActiveLevel
@@ -570,7 +593,14 @@ class Guides {
         );
         let totalLines = editor.document.lineCount;
         lastActiveLevel = primaryRanges.activeLevel;
-        for(let line = cursorPosition.line + 1; line < totalLines; line++){
+
+        startLine = cursorPosition.line + 1;
+        endLine = totalLines;
+        if (lineLimit >= 0) {
+            endLine = Math.min(startLine + lineLimit, totalLines);
+        }
+
+        for(let line = startLine; line < endLine; line++){
             let ranges = this.getRangesForLine(
                 editor, line, maxLevel,
                 primaryRanges.activeLevel, lastActiveLevel
