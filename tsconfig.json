@@ -2,12 +2,19 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
-        "outDir": "out",
+        "outDir": "dist",
         "lib": ["es6"],
-        "sourceMap": true
+        "sourceMap": true,
+        "alwaysStrict": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true
     },
     "exclude": [
         "node_modules",
-        ".vscode-test"
+        ".vscode-test",
+        "tests",
+        "extension.ts"
     ]
 }

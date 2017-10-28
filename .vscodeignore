@@ -1,10 +1,13 @@
+.github/**
 .vscode/**
-typings/**
-out/test/**
-test/**
-src/**
+tests/**
+**/*.ts
 **/*.map
+.editorconfig
 .gitignore
+.travis.yml
+package-lock.json
 tsconfig.json
+tslint.json
 vsc-extension-quickstart.md
 *.vsix

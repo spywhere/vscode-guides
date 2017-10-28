@@ -1,0 +1,168 @@
+{
+    "extends": [
+        "tslint-eslint-rules"
+    ],
+    "rules": {
+        // TypeScript
+        "no-internal-module": true,
+        "no-reference": true,
+        "no-unnecessary-type-assertion": true,
+        "no-var-requires": true,
+        "prefer-for-of": true,
+        "unified-signatures": true,
+        // Functionality
+        "await-promise": true,
+        "curly": true,
+        "forin": true,
+        "no-arg": true,
+        "no-bitwise": true,
+        "no-conditional-assignment": true,
+        "no-construct": true,
+        "no-duplicate-super": true,
+        "no-duplicate-variable": true,
+        "no-empty": true,
+        "no-eval": true,
+        "no-for-in-array": true,
+        "no-inferred-empty-object-type": true,
+        "no-invalid-template-strings": true,
+        "no-invalid-this": true,
+        "no-misused-new": true,
+        "no-null-keyword": true,
+        "no-shadowed-variable": true,
+        "no-sparse-arrays": true,
+        "no-string-throw": true,
+        "no-unbound-method": true,
+        "no-unsafe-finally": true,
+        "no-unused-expression": true,
+        // "no-unused-variable": true,  // Currently has a bug (import generic)
+        "no-var-keyword": true,
+        "restrict-plus-operands": true,
+        // "strict-type-predicates": true,  // Currently has a bug (compare 2 typeof)
+        "switch-default": true,
+        "triple-equals": [
+            true
+        ],
+        "typeof-compare": true,
+        "use-isnan": true,
+        // Maintainability
+        // "deprecation": true,  // Currently has a bug (moment.add)
+        "eofline": true,
+        "indent": [
+            true, "spaces"
+        ],
+        "linebreak-style": [
+            true, "LF"
+        ],
+        "max-line-length": [
+            true, 80
+        ],
+        "no-require-imports": true,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ],
+        // Style
+        "align": [
+            true,
+            "parameters",
+            "statements",
+            "members"
+        ],
+        "array-type": [
+            true,
+            "array"
+        ],
+        "arrow-parens": [true],
+        "arrow-return-shorthand": [true, "multiline"],
+        "class-name": true,
+        "import-spacing": true,
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
+        "interface-over-type-literal": true,
+        "new-parens": true,
+        "no-angle-bracket-type-assertion": true,
+        "no-consecutive-blank-lines": [
+            true, 2
+        ],
+        "no-irregular-whitespace": true,
+        "no-parameter-properties": true,
+        "no-reference-import": true,
+        "no-trailing-whitespace": true,
+        "no-unnecessary-callback-wrapper": true,
+        "no-unnecessary-initializer": true,
+        "no-unnecessary-qualifier": true,
+        "number-literal-format": true,
+        "object-literal-key-quotes": [true, "consistent-as-needed"],
+        "one-line": [
+            true,
+            "check-catch",
+            "check-finally",
+            "check-else"
+        ],
+        "one-variable-per-declaration": [
+            true
+        ],
+        "quotemark": [
+            true,
+            "double"
+        ],
+        "return-undefined": true,
+        "semicolon": [
+            true,
+            "always"
+        ],
+        "space-before-function-paren": [true, "never"],
+        "variable-name": [
+            true,
+            "check-format",
+            "ban-keywords"
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator"
+        ],
+        // ESLint Rules //
+        // Possible Errors
+        "no-constant-condition": true,
+        "no-control-regex": true,
+        "no-duplicate-case": true,
+        "no-ex-assign": true,
+        "no-empty-character-class": true,
+        "no-extra-boolean-cast": true,
+        "no-extra-semi": true,
+        "no-inner-declarations": [true, "both"],
+        "no-invalid-regexp": true,
+        "no-unexpected-multiline": true,
+        "valid-typeof": true,
+        // Best Practices
+        "no-multi-spaces": [
+            true,
+            {
+                "exceptions": {
+                    "PropertyAssignment": false
+                }
+            }
+        ],
+        // Stylistic Issues
+        "block-spacing": [true, "always"],
+        "brace-style": [
+            true,
+            "1tbs",
+            {
+                "allowSingleLine": true
+            }
+        ],
+        "ter-indent": [true, 4],
+        "space-in-parens": [true, "never"],
+        // ECMAScript 6
+        "ter-arrow-spacing": [true]
+    }
+}

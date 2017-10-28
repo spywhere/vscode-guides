@@ -21,7 +21,7 @@
     "url": "https://github.com/spywhere/vscode-guides.git"
   },
   "engines": {
-    "vscode": "^1.9.0"
+    "vscode": "^1.17.0"
   },
   "categories": [
     "Other"
@@ -29,7 +29,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension",
+  "main": "./dist/guides",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -271,17 +271,51 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "jest",
+    "coverage": "jest --verbose --coverage",
+    "lint": "tslint --project tsconfig.json --type-check -e \"node_modules/**/*\" \"**/*.ts\""
   },
   "devDependencies": {
-    "@types/node": "^6.0.40",
-    "@types/request": "^0.0.39",
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0"
+    "@types/jest": "^21.1.2",
+    "@types/lodash": "^4.14.80",
+    "@types/node": "^7.0.43",
+    "@types/request": "^2.0.5",
+    "@types/semver": "^5.4.0",
+    "jest": "^21.2.1",
+    "tslint": "^5.7.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "typescript": "^2.5.3",
+    "vscode": "^1.1.5"
   },
   "dependencies": {
-    "request": "^2.72.0"
+    "lodash": "^4.17.4",
+    "request": "^2.83.0",
+    "semver": "^5.4.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/tests/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json",
+      "node"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/dist"
+    ]
   }
 }

@@ -1,4 +1,15 @@
-out
+dist
 node_modules
 *.vsix
 vsc-extension-quickstart.md
+logs/log.*
+**/*.log*
+npm-debug.log*
+*.log.*
+pids
+*.pid
+*.seed
+*.pid.lock
+coverage
+.npm
+.eslintcache
