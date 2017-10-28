@@ -6,7 +6,7 @@ export class GuidesController implements GuidesDelegate {
     // MARK: Life Cycle
 
     onDidLoad() {
-
+        // TODO: Implement this
     }
 
     // MARK: GuidesControllerDelegate
@@ -14,18 +14,20 @@ export class GuidesController implements GuidesDelegate {
     onTextSelectionDidChange(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
-
+        // TODO: Implement this
     }
 
     onActiveEditorDidChange(editor: vscode.TextEditor) {
-
+        // TODO: Implement this
     }
 
     onEditorSettingsDidChange(event: vscode.TextEditorOptionsChangeEvent) {
+        // TODO: Implement this
         // Update editor context (tab size)
     }
 
     onConfigurationsDidChange() {
+        // TODO: Implement this
         // Reset all guides
         // Recreate decorations
         // Update all editors

@@ -5,7 +5,7 @@ export interface ActiveGuide extends IndentGuide {
     shouldFind?: {
         upper: boolean;
         lower: boolean;
-    }
+    };
 }
 
 export function findActivePosition(

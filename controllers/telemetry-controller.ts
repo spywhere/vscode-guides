@@ -3,7 +3,7 @@ import TelemetryDelegate from "../protocols/telemetry-delegate";
 
 export class TelemetryController implements TelemetryDelegate {
     onDidLoad(){
-
+        // TODO: Implement this
     }
 }
 

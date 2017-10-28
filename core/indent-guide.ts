@@ -45,7 +45,7 @@ export function getGuides(
     let whitespaces = text.substr(0, firstNonWhitespaceCharacterIndex);
     let singleMatch = whitespaces.match(pattern);
 
-    if (!singleMatch || singleMatch.length == 0) {
+    if (!singleMatch || singleMatch.length === 0) {
         return guides;
     }
 
@@ -56,11 +56,11 @@ export function getGuides(
     });
 
     let index = 0;
-    for(
+    for (
         let indentLevel = 0;
         indentLevel < singleMatch.length;
         indentLevel++
-    ){
+    ) {
         index += singleMatch[indentLevel].length;
         guides.push({
             type: (

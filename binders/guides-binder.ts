@@ -8,16 +8,16 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
         let subscriptions: vscode.Disposable[] = [];
 
         vscode.window.onDidChangeTextEditorSelection(
-            this.onDidChangeTextEditorSelection, this, subscriptions
+            this.onDidChangeTextEditorSelection.bind(this), this, subscriptions
         );
         vscode.window.onDidChangeActiveTextEditor(
-            this.onDidChangeActiveTextEditor, this, subscriptions
+            this.onDidChangeActiveTextEditor.bind(this), this, subscriptions
         );
         vscode.window.onDidChangeTextEditorOptions(
-            this.onDidChangeTextEditorOptions, this, subscriptions
+            this.onDidChangeTextEditorOptions.bind(this), this, subscriptions
         );
         vscode.workspace.onDidChangeConfiguration(
-            this.onDidChangeConfiguration, this, subscriptions
+            this.onDidChangeConfiguration.bind(this), this, subscriptions
         );
 
         this.disposable = vscode.Disposable.from(...subscriptions);
@@ -27,6 +27,7 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
         event: vscode.TextEditorSelectionChangeEvent
     ) {
         this.handlers.forEach((handler) => {
+            /* tslint:disable-next-line:no-unbound-method */
             if (!handler.onTextSelectionDidChange) {
                 return;
             }
@@ -36,6 +37,7 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
 
     protected onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
         this.handlers.forEach((handler) => {
+            /* tslint:disable-next-line:no-unbound-method */
             if (!handler.onActiveEditorDidChange) {
                 return;
             }
@@ -47,6 +49,7 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
         event: vscode.TextEditorOptionsChangeEvent
     ) {
         this.handlers.forEach((handler) => {
+            /* tslint:disable-next-line:no-unbound-method */
             if (!handler.onEditorSettingsDidChange) {
                 return;
             }
@@ -56,6 +59,7 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
 
     protected onDidChangeConfiguration() {
         this.handlers.forEach((handler) => {
+            /* tslint:disable-next-line:no-unbound-method */
             if (!handler.onConfigurationsDidChange) {
                 return;
             }

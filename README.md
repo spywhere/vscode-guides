@@ -1,12 +1,15 @@
 ## Guides
-[![Version](https://vsmarketplacebadge.apphb.com/version/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
+
+A Visual Studio Code extension for more guide lines
+
+[![Version](https://img.shields.io/vscode-marketplace/v/spywhere.guides.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
+[![Installs](https://img.shields.io/vscode-marketplace/d/spywhere.guides.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
+[![Ratings](https://img.shields.io/vscode-marketplace/r/spywhere.guides.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
 
 develop|master
 :-:|:-:
-[![develop build](https://img.shields.io/travis/spywhere/vscode-guides/develop.svg)](https://travis-ci.org/spywhere/vscode-guides)|[![master build](https://img.shields.io/travis/spywhere/vscode-guides/master.svg)](https://travis-ci.org/spywhere/vscode-guides)
-
-A Visual Studio Code extension for more guide lines
+[![develop build](https://img.shields.io/travis/spywhere/vscode-guides/develop.svg?style=flat-square)](https://travis-ci.org/spywhere/vscode-guides)|[![master build](https://img.shields.io/travis/spywhere/vscode-guides/master.svg?style=flat-square)](https://travis-ci.org/spywhere/vscode-guides)
+[![develop coverage](https://img.shields.io/coveralls/github/spywhere/vscode-guides/develop.svg?style=flat-square)](https://coveralls.io/github/spywhere/vscode-guides?branch=develop)|[![master coverage](https://img.shields.io/coveralls/github/spywhere/vscode-guides/master.svg?style=flat-square)](https://coveralls.io/github/spywhere/vscode-guides?branch=master)
 
 ![Screenshot](images/screenshot.png)
 

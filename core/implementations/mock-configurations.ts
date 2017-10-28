@@ -14,7 +14,9 @@ export class MockConfigurations implements Configurations {
         }
     }
 
-    reload() {}
+    reload() {
+        // Omit intended
+    }
 
     get<T>(section: string, defaultValue?: T) {
         return _.get<
