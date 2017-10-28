@@ -21,7 +21,7 @@ describe("active-guide", () => {
             }
         };
 
-        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText);
+        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText) || [];
 
         let afterContext: IndentContext = {
             tabSize: 2,
@@ -37,7 +37,7 @@ describe("active-guide", () => {
             }
         };
 
-        let afterGuides = IndentGuide.getGuides(afterContext, lineText);
+        let afterGuides = IndentGuide.getGuides(afterContext, lineText) || [];
 
         expect(ActiveGuide.findActivePosition(
             beforeContext, lineText, beforeGuides
@@ -69,7 +69,7 @@ describe("active-guide", () => {
             }
         };
 
-        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText);
+        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText) || [];
 
         let afterContext: IndentContext = {
             tabSize: 2,
@@ -85,7 +85,7 @@ describe("active-guide", () => {
             }
         };
 
-        let afterGuides = IndentGuide.getGuides(afterContext, lineText);
+        let afterGuides = IndentGuide.getGuides(afterContext, lineText) || [];
 
         expect(ActiveGuide.findActivePosition(
             beforeContext, lineText, beforeGuides

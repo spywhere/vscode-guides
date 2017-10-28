@@ -2,6 +2,10 @@
 [![Version](https://vsmarketplacebadge.apphb.com/version/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/spywhere.guides.svg)](https://marketplace.visualstudio.com/items?itemName=spywhere.guides)
 
+develop|master
+:-:|:-:
+[![develop build](https://img.shields.io/travis/spywhere/vscode-guides/develop.svg)](https://travis-ci.org/spywhere/vscode-guides)|[![master build](https://img.shields.io/travis/spywhere/vscode-guides/master.svg)](https://travis-ci.org/spywhere/vscode-guides)
+
 A Visual Studio Code extension for more guide lines
 
 ![Screenshot](images/screenshot.png)

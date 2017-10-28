@@ -23,7 +23,7 @@ describe("indent-range", () => {
             }
         };
 
-        let guides = IndentGuide.getGuides(context, lineText);
+        let guides = IndentGuide.getGuides(context, lineText) || [];
 
         let extraContext: IndentContext = {
             tabSize: 2,
@@ -41,7 +41,7 @@ describe("indent-range", () => {
             }
         };
 
-        let extraGuides = IndentGuide.getGuides(extraContext, lineText);
+        let extraGuides = IndentGuide.getGuides(extraContext, lineText) || [];
 
         expect(
             IndentRange.getRangesForIndentGuides(context, lineText, guides)
@@ -107,7 +107,7 @@ describe("indent-range", () => {
             }
         };
 
-        let guides = IndentGuide.getGuides(context, lineText);
+        let guides = IndentGuide.getGuides(context, lineText) || [];
 
         let extraContext: IndentContext = {
             tabSize: 2,
@@ -125,7 +125,7 @@ describe("indent-range", () => {
             }
         };
 
-        let extraGuides = IndentGuide.getGuides(extraContext, lineText);
+        let extraGuides = IndentGuide.getGuides(extraContext, lineText) || [];
 
         expect(
             IndentRange.getRangesForIndentGuides(context, lineText, guides)
@@ -191,7 +191,7 @@ describe("indent-range", () => {
             }
         };
 
-        let guides = IndentGuide.getGuides(context, lineText);
+        let guides = IndentGuide.getGuides(context, lineText) || [];
 
         let extraContext: IndentContext = {
             tabSize: 2,
@@ -209,7 +209,7 @@ describe("indent-range", () => {
             }
         };
 
-        let extraGuides = IndentGuide.getGuides(extraContext, lineText);
+        let extraGuides = IndentGuide.getGuides(extraContext, lineText) || [];
 
         expect(
             IndentRange.getRangesForIndentGuides(context, lineText, guides)
