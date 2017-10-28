@@ -11,6 +11,10 @@ develop|master
 [![develop build](https://img.shields.io/travis/spywhere/vscode-guides/develop.svg?style=flat-square)](https://travis-ci.org/spywhere/vscode-guides)|[![master build](https://img.shields.io/travis/spywhere/vscode-guides/master.svg?style=flat-square)](https://travis-ci.org/spywhere/vscode-guides)
 [![develop coverage](https://img.shields.io/coveralls/github/spywhere/vscode-guides/develop.svg?style=flat-square)](https://coveralls.io/github/spywhere/vscode-guides?branch=develop)|[![master coverage](https://img.shields.io/coveralls/github/spywhere/vscode-guides/master.svg?style=flat-square)](https://coveralls.io/github/spywhere/vscode-guides?branch=master)
 
+> **Hey There!** This is a development build for potential next major release.
+> 
+> For current stable release, please check out [master branch](https://github.com/spywhere/vscode-guides/tree/master).
+
 ![Screenshot](images/screenshot.png)
 
 ### What is Guides?
@@ -47,7 +51,7 @@ For example, `0.5` will render guides covered at maximum of 50% in current docum
 Set to `1` or more to render at maximum of specified number of lines.
 
 - `guides.overrideDefault`:  
-Set to "true" to suppress any suggestion towards default Visual Studio Code behaviours.
+Set to `true` to suppress any suggestion towards default Visual Studio Code behaviours.
 
 ### FAQs
 
@@ -62,4 +66,4 @@ Since Visual Studio Code API does not provide the API for drawing line on empty 
 - *Stack indentation guide* is a line that run down along each indentation level that comes before the active indentation level.
 
 **Q:** License?  
-**A:** MIT
+**A:** MIT, however, giving a mention is much appreciated.
