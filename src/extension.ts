@@ -223,13 +223,20 @@ class Guides {
             minor: 0,
             patch: 1
         }];
+
+        let editorConfigurations = vscode.workspace.getConfiguration(
+            "editor",
+            vscode.window.activeTextEditor ?
+            vscode.window.activeTextEditor.document.uri : undefined
+        );
+
         let lastIndex = 0;
         let overrideStyle  = !this.configurations.get<boolean>(
             "overrideDefault"
         ) && indentSettingNames.some(
             (settings, index) => {
                 lastIndex = index;
-                return vscode.workspace.getConfiguration("editor").get<boolean>(
+                return editorConfigurations.get<boolean>(
                     settings.name, false
                 ) && this.isEqualOrNewerVersionThan(
                     settings.major, settings.minor, settings.patch
@@ -251,8 +258,9 @@ class Guides {
                 "override the style to \"none\".", {
                     title: "Use Guides",
                     action: () => {
-                        vscode.workspace.getConfiguration("editor").update(
-                            settings.name, false, true
+                        editorConfigurations.update(
+                            settings.name, false,
+                            vscode.ConfigurationTarget.Global
                         );
                     },
                     isCloseAffordance: true
@@ -263,7 +271,7 @@ class Guides {
                     title: "Always use built-in",
                     action: () => {
                         vscode.workspace.getConfiguration("guides").update(
-                            "enabled", false, true
+                            "enabled", false, vscode.ConfigurationTarget.Global
                         );
                     },
                     isCloseAffordance: true

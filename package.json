@@ -2,7 +2,7 @@
   "name": "guides",
   "displayName": "Guides",
   "description": "An extension for more guide lines",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "publisher": "spywhere",
   "icon": "images/icon.png",
   "bugs": {
@@ -13,7 +13,8 @@
     "indentation",
     "guides",
     "indentation guides",
-    "ruler"
+    "ruler",
+    "multi-root ready"
   ],
   "license": "MIT",
   "repository": {
@@ -21,7 +22,7 @@
     "url": "https://github.com/spywhere/vscode-guides.git"
   },
   "engines": {
-    "vscode": "^1.9.0"
+    "vscode": "^1.17.0"
   },
   "categories": [
     "Other"
@@ -42,13 +43,15 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.limit.maximum": {
           "type": "number",
           "default": 500,
           "description": "Maximum rendering boundary based on current cursor position. Set to -1 for no limit. Use floating point between 0-1 to determine from document size instead.",
-          "minimum": -1
+          "minimum": -1,
+          "scope": "window"
         },
         "guides.indent.backgrounds": {
           "type": "array",
@@ -57,7 +60,8 @@
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
           },
-          "description": "Indentation background colors."
+          "description": "Indentation background colors.",
+          "scope": "window"
         },
         "guides.indent.hideBackgroundOnSelection": {
           "type": "boolean",
@@ -66,7 +70,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.indent.showFirstIndentGuides": {
           "type": "boolean",
@@ -75,7 +80,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.normal.enabled": {
           "type": "boolean",
@@ -84,22 +90,26 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.normal.width": {
           "type": "number",
           "default": 1,
-          "description": "Normal indentation guides rendering width."
+          "description": "Normal indentation guides rendering width.",
+          "scope": "window"
         },
         "guides.normal.color.dark": {
           "type": "string",
           "default": "rgba(60, 60, 60, 0.75)",
-          "description": "Normal indentation guides rendering color for dark themes."
+          "description": "Normal indentation guides rendering color for dark themes.",
+          "scope": "window"
         },
         "guides.normal.color.light": {
           "type": "string",
           "default": "rgba(220, 220, 220, 0.75)",
-          "description": "Normal indentation guides rendering color for light themes."
+          "description": "Normal indentation guides rendering color for light themes.",
+          "scope": "window"
         },
         "guides.normal.style": {
           "type": "string",
@@ -115,7 +125,8 @@
             "ridge",
             "inset",
             "outset"
-          ]
+          ],
+          "scope": "window"
         },
         "guides.normal.hideOnSelection": {
           "type": "boolean",
@@ -124,7 +135,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.gutter": {
           "type": "boolean",
@@ -133,7 +145,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.enabled": {
           "type": "boolean",
@@ -142,7 +155,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.expandBrackets": {
           "type": "boolean",
@@ -151,22 +165,26 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.width": {
           "type": "number",
           "default": 1,
-          "description": "Active indentation guides rendering width."
+          "description": "Active indentation guides rendering width.",
+          "scope": "window"
         },
         "guides.active.color.dark": {
           "type": "string",
           "default": "rgba(120, 60, 60, 0.75)",
-          "description": "Active indentation guides rendering color for dark themes."
+          "description": "Active indentation guides rendering color for dark themes.",
+          "scope": "window"
         },
         "guides.active.color.light": {
           "type": "string",
           "default": "rgba(200, 100, 100, 0.75)",
-          "description": "Active indentation guides rendering color for light themes."
+          "description": "Active indentation guides rendering color for light themes.",
+          "scope": "window"
         },
         "guides.active.style": {
           "type": "string",
@@ -182,7 +200,8 @@
             "ridge",
             "inset",
             "outset"
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.hideOnSelection": {
           "type": "boolean",
@@ -191,7 +210,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.active.extraIndent": {
           "type": "boolean",
@@ -200,7 +220,8 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.stack.enabled": {
           "type": "boolean",
@@ -209,22 +230,26 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.stack.width": {
           "type": "number",
           "default": 1,
-          "description": "Stack indentation guides rendering width."
+          "description": "Stack indentation guides rendering width.",
+          "scope": "window"
         },
         "guides.stack.color.dark": {
           "type": "string",
           "default": "rgba(80, 80, 80, 0.75)",
-          "description": "Stack indentation guides rendering color for dark themes."
+          "description": "Stack indentation guides rendering color for dark themes.",
+          "scope": "window"
         },
         "guides.stack.color.light": {
           "type": "string",
           "default": "rgba(180, 180, 180, 0.75)",
-          "description": "Stack indentation guides rendering color for light themes."
+          "description": "Stack indentation guides rendering color for light themes.",
+          "scope": "window"
         },
         "guides.stack.style": {
           "type": "string",
@@ -240,7 +265,8 @@
             "ridge",
             "inset",
             "outset"
-          ]
+          ],
+          "scope": "window"
         },
         "guides.stack.hideOnSelection": {
           "type": "boolean",
@@ -249,23 +275,27 @@
           "enum": [
             true,
             false
-          ]
+          ],
+          "scope": "window"
         },
         "guides.updateDelay": {
           "type": "number",
           "default": 0.1,
           "description": "Time duration between each guide lines update (in seconds).",
-          "minimum": 0.01
+          "minimum": 0.01,
+          "scope": "window"
         },
         "guides.overrideDefault": {
           "type": "boolean",
           "default": false,
-          "description": "Override default Visual Studio Code behaviours (such as indentation guides or rulers)."
+          "description": "Override default Visual Studio Code behaviours (such as indentation guides or rulers).",
+          "scope": "window"
         },
         "guides.sendUsagesAndStats": {
           "type": "boolean",
           "default": true,
-          "description": "Send anonymous usage statistics data to the developer."
+          "description": "Send anonymous usage statistics data to the developer.",
+          "scope": "window"
         }
       }
     }
@@ -278,7 +308,7 @@
   "devDependencies": {
     "@types/node": "^6.0.40",
     "@types/request": "^0.0.39",
-    "typescript": "^2.0.3",
+    "typescript": "^2.1.4",
     "vscode": "^1.0.0"
   },
   "dependencies": {
