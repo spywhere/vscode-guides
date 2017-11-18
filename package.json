@@ -306,12 +306,12 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/node": "^6.0.40",
-    "@types/request": "^0.0.39",
-    "typescript": "^2.1.4",
-    "vscode": "^1.0.0"
+    "@types/node": "^8.0.53",
+    "@types/request": "^2.0.8",
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.7"
   },
   "dependencies": {
-    "request": "^2.72.0"
+    "request": "^2.83.0"
   }
 }
