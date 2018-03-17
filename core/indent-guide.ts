@@ -29,7 +29,7 @@ export function getGuides(
     let tabSize = context.tabSize;
 
     let pattern = new RegExp(` {${ tabSize }}| {0,${ tabSize - 1 }}\t`, "g");
-    
+
     let guides: IndentGuide[] = [];
 
     let firstNonWhitespaceCharacterIndex = (

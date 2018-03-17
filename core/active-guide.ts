@@ -20,7 +20,7 @@ export function findActiveGuideIndex(
         "active.extraIndent", false
     );
     let expandBrackets = editorContext.configurations.get(
-        "active.expandBrackets", false
+        "active.expandBrackets", true
     );
 
     let cursorPosition = (

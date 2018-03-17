@@ -49,7 +49,10 @@ export function getRangesForIndentGuides(
             continue;
         }
 
-        if (activeGuide === undefined || indentGuide.position > activeGuide.position) {
+        if (
+            activeGuide === undefined ||
+            indentGuide.position > activeGuide.position
+        ) {
             normal.push(indentGuide.position);
         } else if (indentGuide.position < activeGuide.position) {
             stack.push(indentGuide.position);
