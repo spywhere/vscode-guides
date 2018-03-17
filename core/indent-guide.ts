@@ -1,4 +1,5 @@
-import IndentContext from "./indent-context";
+import * as _ from "lazy.js";
+import EditorContext from "./editor-context";
 
 export interface IndentGuide {
     type: "start" | "normal" | "end";
@@ -7,19 +8,19 @@ export interface IndentGuide {
 }
 
 export function getGuides(
-    context: IndentContext,
+    context: EditorContext,
     text: string,
-    option?: Partial<{
+    predeterminations?: Partial<{
         isEmptyOrWhitespace: boolean;
         firstNonWhitespaceCharacterIndex: number;
     }>
 ) {
     if (
         (
-            !option && text === ""
+            !predeterminations && text === ""
         ) ||
         (
-            option && option.isEmptyOrWhitespace
+            predeterminations && predeterminations.isEmptyOrWhitespace
         )
     ) {
         return undefined;
@@ -28,14 +29,18 @@ export function getGuides(
     let tabSize = context.tabSize;
 
     let pattern = new RegExp(` {${ tabSize }}| {0,${ tabSize - 1 }}\t`, "g");
-    let emptySpace = " ".repeat(tabSize);
-
+    
     let guides: IndentGuide[] = [];
 
     let firstNonWhitespaceCharacterIndex = (
-        option && option.firstNonWhitespaceCharacterIndex !== undefined
-    ) ? option.firstNonWhitespaceCharacterIndex : (
-        text.split("").findIndex((subtext) => subtext.trim() !== "")
+        predeterminations &&
+        predeterminations.firstNonWhitespaceCharacterIndex !== undefined
+    ) ? predeterminations.firstNonWhitespaceCharacterIndex : (
+        ((
+            _(text).split("").map(
+                (subtext) => subtext.trim() !== ""
+            ).indexOf(true)
+        ) as any) as number
     );
 
     if (firstNonWhitespaceCharacterIndex < 0) {

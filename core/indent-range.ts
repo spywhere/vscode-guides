@@ -1,11 +1,10 @@
-import IndentContext from "./indent-context";
+import EditorContext from "./editor-context";
 import { IndentGuide } from "./indent-guide";
-import { ActiveGuide, findActivePosition } from "./active-guide";
 
 export interface GuideRanges {
     guides: {
         stack: number[];
-        active?: ActiveGuide;
+        active?: number;
         normal: number[];
     };
     backgrounds: {
@@ -15,12 +14,10 @@ export interface GuideRanges {
 }
 
 export function getRangesForIndentGuides(
-    context: IndentContext,
-    lineText: string,
-    guides: IndentGuide[]
+    context: EditorContext,
+    guides: IndentGuide[],
+    activeGuide?: IndentGuide
 ): GuideRanges {
-    guides = guides || [];
-
     let stack: number[] = [];
     let normal: number[] = [];
     let backgrounds: {
@@ -28,7 +25,6 @@ export function getRangesForIndentGuides(
         to: number;
     }[] = [];
 
-    let active = findActivePosition(context, lineText, guides);
     let firstIndent = context.configurations.get(
         "indent.firstIndent", true
     );
@@ -53,9 +49,9 @@ export function getRangesForIndentGuides(
             continue;
         }
 
-        if (active === undefined || indentGuide.position > active.position) {
+        if (activeGuide === undefined || indentGuide.position > activeGuide.position) {
             normal.push(indentGuide.position);
-        } else if (indentGuide.position < active.position) {
+        } else if (indentGuide.position < activeGuide.position) {
             stack.push(indentGuide.position);
         }
     }
@@ -63,7 +59,7 @@ export function getRangesForIndentGuides(
     return {
         guides: {
             stack,
-            active,
+            active: activeGuide ? activeGuide.position : undefined,
             normal
         },
         backgrounds

@@ -25,17 +25,15 @@ An orchestrator for render an indentation guide from the core logic
 
 Pure core logic of the extension, render-independent
 
-- [ ] Indent Context  
-Hold a state of the editor,
-used for state-dependent calculation such as active indentation guides
+- [ ] Editor Context  
+Hold a state of the editor, such as a current tab size and configurations
 
 - [ ] Indent Guide  
 Calculate and returns a list of position in a string (called `IndentGuide`)
 where an indentation indication should be
 
 - [ ] Active Guide  
-Calculate and returns an active position (called `ActiveGuide`)
-from a list of `IndentGuide`
+Calculate and returns an index of active guide from a list of `IndentGuide`
 
 - [ ] Indent Range  
 Convert a list of `IndentGuide` into a list of different types of indentation

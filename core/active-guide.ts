@@ -1,47 +1,43 @@
-import IndentContext from "./indent-context";
+import EditorContext from "./editor-context";
 import { IndentGuide } from "./indent-guide";
 
-export interface ActiveGuide extends IndentGuide {
-    shouldFind?: {
-        upper: boolean;
-        lower: boolean;
-    };
-}
-
-export function findActivePosition(
-    context: IndentContext,
-    lineText: string,
-    guides: IndentGuide[]
-): ActiveGuide | undefined {
-    if (!context.activeGuides) {
-        return undefined;
-    } else if (
-        context.activeGuides.level >= 0
-    ) {
-        return (
-            context.activeGuides.level < guides.length ?
-            guides[context.activeGuides.level] : undefined
+export function findActiveGuideIndex(
+    guides: IndentGuide[],
+    editorContext: EditorContext,
+    predeterminations: {
+        cursorPositionInLine?: number;
+        lineText: string;
+    },
+    activeGuideContext?: IndentGuide
+): number {
+    if (activeGuideContext && activeGuideContext.indentLevel >= 0) {
+        return guides.findIndex(
+            (guide) => guide.indentLevel === activeGuideContext.indentLevel
         );
     }
 
-    let extraIndent = context.configurations.get(
+    let extraIndent = editorContext.configurations.get(
         "active.extraIndent", false
     );
-    let expandBrackets = context.configurations.get(
+    let expandBrackets = editorContext.configurations.get(
         "active.expandBrackets", false
     );
 
-    let cursorPosition = context.activeGuides.cursorPositionInLine;
+    let cursorPosition = (
+        predeterminations.cursorPositionInLine === undefined ?
+        predeterminations.lineText.length :
+        predeterminations.cursorPositionInLine
+    );
 
     if (expandBrackets) {
         let lastCharacter = (
-            cursorPosition <= lineText.length ?
-            lineText[cursorPosition - 1] : ""
-        );
+            cursorPosition > 0 &&
+            cursorPosition <= predeterminations.lineText.length
+        ) ? predeterminations.lineText[cursorPosition - 1] : "";
 
         if (
             lastCharacter &&
-            "[({})]".split("").some((character) => lastCharacter === character)
+            "[({})]".indexOf(lastCharacter) >= 0
         ) {
             cursorPosition -= 1;
         }
@@ -51,16 +47,13 @@ export function findActivePosition(
         let indentGuide = guides[index];
 
         if (
-            (extraIndent && (
-                indentGuide.position <=
-                cursorPosition
-            )) || (!extraIndent && indentGuide.type !== "end" && (
-                indentGuide.position <
-                context.activeGuides.cursorPositionInLine
+            (extraIndent && indentGuide.position <= cursorPosition) ||
+            (!extraIndent && indentGuide.type !== "end" && (
+                indentGuide.position < cursorPosition
             ))
         ) {
-            return indentGuide;
+            return index;
         }
     }
-    return undefined;
+    return -1;
 }

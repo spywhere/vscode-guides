@@ -3,11 +3,15 @@ import * as vscode from "vscode";
 class DecorationManager {
     protected decorations: {
         [key: string]: vscode.TextEditorDecorationType;
-    };
+    } = {};
 
-    clearDecorations(){
+    clearDecorations(textEditor?: vscode.TextEditor){
         for (let key of Object.keys(this.decorations)) {
-            this.decorations[key].dispose();
+            let decoration = this.decorations[key];
+            if (textEditor) {
+                textEditor.setDecorations(decoration, []);
+            }
+            decoration.dispose();
         }
         this.decorations = {};
     }

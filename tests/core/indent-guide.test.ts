@@ -1,12 +1,12 @@
 import Configurations from "../../core/implementations/mock-configurations";
-import IndentContext from "../../core/indent-context";
+import EditorContext from "../../core/editor-context";
 import * as IndentGuide from "../../core/indent-guide";
 
 describe("indent-guide", () => {
     it(
         "should find a proper tab stop from a specified indentation context",
         () => {
-            let context: IndentContext = {
+            let context: EditorContext = {
                 tabSize: 4,
                 configurations: Configurations()
             };
