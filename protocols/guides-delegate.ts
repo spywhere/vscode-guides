@@ -9,6 +9,9 @@ export interface GuidesDelegate extends BaseDelegate {
     onEditorSettingsDidChange?(
         event: vscode.TextEditorOptionsChangeEvent
     ): void;
+    onEditorVisibleRangesDidChange?(
+        event: vscode.TextEditorVisibleRangesChangeEvent
+    ): void;
     onConfigurationsDidChange?(): void;
 }
 

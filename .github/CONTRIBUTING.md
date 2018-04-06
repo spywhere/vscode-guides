@@ -6,6 +6,8 @@ First, please do a search in [open issues](https://github.com/spywhere/vscode-gu
 
 Also do a search in [close issues](https://github.com/spywhere/vscode-guides/issues?q=is%3Aissue+is%3Aclosed) to see if the issue or feature request has already been implemented.
 
+In case of related issue, make a link to the related issue to help add more information on the issue itself.
+
 If you find your issue already exists, make relevant comments and add your [reaction](https://github.com/blog/2119-add-reactions-to-pull-requests-issues-and-comments). Use a reaction in place of a "+1" comment.
 
 👍 - upvote

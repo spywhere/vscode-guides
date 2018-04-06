@@ -1,12 +1,15 @@
-normal indentation mode:
+## Indentation Mode
+
+- normal indentation mode:
   > active indentation is the container's indentation of the cursor position
-extra indentation mode (`active.extraIndent`):
+
+- extra indentation mode (`active.extraIndent`):
   > active indentation is the left most indentation to the cursor position
 
-Migration:
+## Migration
 
 - Before: `guides.enabled`  
-After: *Removed: Use `guides.limit.mode` instead*  
+After: *Removed - Use `guides.limit.mode` instead*  
 Type/Values: boolean  
 Default: true  
 Description: Enable the extension.
@@ -35,12 +38,12 @@ After: `guides.limit.progressive`
 Type/Values: number  
 Default: 5  
 Description: Make the rendering guides fade towards a transparent within specified number of lines.
-Must be less than "guides.limit.maximum", otherwise this option will be ignored.
+Must be less than "guides.limit.maximum" but more than 0, otherwise this option will be ignored.
 
 - Before: `guides.indent.showFirstIndentGuides`  
 After: *Same*  
 Type/Values: boolean  
-Default: false  
+Default: true  
 Description: Render start-of-line indentation guides.
 
 - Before: `guides.indent.backgrounds`  
@@ -56,7 +59,7 @@ Default: true
 Description: Hide indentation backgrounds in selections.
 
 - Before: `guides.[normal/active/stack].enabled`  
-After: *Removed: Use `guides.[normal/active/stack].style` instead*  
+After: *Removed - Use `guides.[normal/active/stack].style` instead*  
 Type/Values: boolean  
 Default: true  
 Description: Enable [normal/active/stack] indentation guides.
@@ -74,13 +77,13 @@ Default: 1
 Description: Rendering width for [normal/active/stack] indentation guides.
 
 - Before: `guides.[normal/active/stack].color.light`  
-After: *Removed: Use `guides.[normal/active/stack].colors.light` instead*  
+After: *Removed - Use `guides.[normal/active/stack].colors.light` instead*  
 Type/Values: string  
 Default: *Based on the type*  
 Description: Rendering color for [normal/active/stack] indentation guides.
 
 - Before: `guides.[normal/active/stack].color.dark`  
-After: *Removed: Use `guides.[normal/active/stack].colors.dark` instead*  
+After: *Removed - Use `guides.[normal/active/stack].colors.dark` instead*  
 Type/Values: string  
 Default: *Based on the type*  
 Description: Rendering color for [normal/active/stack] indentation guides.
@@ -89,13 +92,13 @@ Description: Rendering color for [normal/active/stack] indentation guides.
 After: `guides.[normal/active/stack].colors.light`  
 Type/Values: string[]  
 Default: *Based on the type*  
-DescriptionDescription: Rendering colors for [normal/active/stack] indentation guides.
+Description: Rendering colors for [normal/active/stack] indentation guides on light theme.
 
 - Before: *Not Available*  
 After: `guides.[normal/active/stack].colors.dark`  
 Type/Values: string[]  
 Default: *Based on the type*  
-Description: Rendering colors for [normal/active/stack] indentation guides.
+Description: Rendering colors for [normal/active/stack] indentation guides on dark theme.
 
 - Before: `guides.[normal/active/stack].hideOnSelection`  
 After: *Same*  

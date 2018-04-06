@@ -16,6 +16,10 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
         vscode.window.onDidChangeTextEditorOptions(
             this.onDidChangeTextEditorOptions.bind(this), this, subscriptions
         );
+        vscode.window.onDidChangeTextEditorVisibleRanges(
+            this.onDidChangeTextEditorVisibleRanges.bind(this),
+            this, subscriptions
+        );
         vscode.workspace.onDidChangeConfiguration(
             this.onDidChangeConfiguration.bind(this), this, subscriptions
         );
@@ -54,6 +58,18 @@ export class GuidesBinder extends BaseBinder<GuidesDelegate> {
                 return;
             }
             handler.onEditorSettingsDidChange(event);
+        });
+    }
+
+    protected onDidChangeTextEditorVisibleRanges(
+        event: vscode.TextEditorVisibleRangesChangeEvent
+    ) {
+        this.handlers.forEach((handler) => {
+            /* tslint:disable-next-line:no-unbound-method */
+            if (!handler.onEditorVisibleRangesDidChange) {
+                return;
+            }
+            handler.onEditorVisibleRangesDidChange(event);
         });
     }
 

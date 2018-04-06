@@ -42,7 +42,6 @@
         "triple-equals": [
             true
         ],
-        "typeof-compare": true,
         "use-isnan": true,
         // Maintainability
         // "deprecation": true,  // Currently has a bug (moment.add)

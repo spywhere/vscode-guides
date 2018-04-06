@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
         "target": "es6",
+        "module": "commonjs",
+        "sourceMap": true,
         "outDir": "dist",
         "lib": ["es6"],
-        "sourceMap": true,
-        "alwaysStrict": true,
-        "noImplicitAny": true,
         "removeComments": true,
-        "strictNullChecks": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "strict": true
     },
     "exclude": [
         "node_modules",
