@@ -177,89 +177,97 @@ describe("indent-range", () => {
         });
     });
 
-    it("should find rendering ranges when cursor is at the end of line", () => {
-        let lineText = "  \t  abcdef";
+    it(
+        "should find rendering ranges when cursor is at the end of line",
+        () => {
+            let lineText = "  \t  abcdef";
 
-        let context: EditorContext = {
-            tabSize: 2,
-            configurations: Configurations({
-                indent: {
-                    firstIndent: true
-                },
-                active: {
-                    extraIndent: false
+            let context: EditorContext = {
+                tabSize: 2,
+                configurations: Configurations({
+                    indent: {
+                        firstIndent: true
+                    },
+                    active: {
+                        extraIndent: false
+                    }
+                })
+            };
+
+            let guides = IndentGuide.getGuides(context, lineText) || [];
+            let activeIndex = ActiveGuide.findActiveGuideIndex(
+                guides, context, {
+                    cursorPositionInLine: 11,
+                    lineText
                 }
-            })
-        };
+            );
 
-        let guides = IndentGuide.getGuides(context, lineText) || [];
-        let activeIndex = ActiveGuide.findActiveGuideIndex(
-            guides, context, {
-                cursorPositionInLine: 11,
-                lineText
-            }
-        );
+            let extraContext: EditorContext = {
+                tabSize: 2,
+                configurations: Configurations({
+                    indent: {
+                        firstIndent: false
+                    },
+                    active: {
+                        extraIndent: true
+                    }
+                })
+            };
 
-        let extraContext: EditorContext = {
-            tabSize: 2,
-            configurations: Configurations({
-                indent: {
-                    firstIndent: false
-                },
-                active: {
-                    extraIndent: true
+            let extraGuides = IndentGuide.getGuides(
+                extraContext, lineText
+            ) || [];
+            let extraActiveIndex = ActiveGuide.findActiveGuideIndex(
+                extraGuides, extraContext, {
+                    cursorPositionInLine: 11,
+                    lineText
                 }
-            })
-        };
+            );
 
-        let extraGuides = IndentGuide.getGuides(extraContext, lineText) || [];
-        let extraActiveIndex = ActiveGuide.findActiveGuideIndex(
-            extraGuides, extraContext, {
-                cursorPositionInLine: 11,
-                lineText
-            }
-        );
+            expect(IndentRange.getRangesForIndentGuides(
+                context, guides,
+                activeIndex < 0 ? undefined : guides[activeIndex]
+            )).toMatchObject({
+                guides: {
+                    stack: [0, 2],
+                    active: 3,
+                    normal: []
+                },
+                backgrounds: [{
+                    from: 0,
+                    to: 2
+                }, {
+                    from: 2,
+                    to: 3
+                }, {
+                    from: 3,
+                    to: 5
+                }]
+            });
 
-        expect(IndentRange.getRangesForIndentGuides(
-            context, guides,
-            activeIndex < 0 ? undefined : guides[activeIndex]
-        )).toMatchObject({
-            guides: {
-                stack: [0, 2],
-                active: 3,
-                normal: []
-            },
-            backgrounds: [{
-                from: 0,
-                to: 2
-            }, {
-                from: 2,
-                to: 3
-            }, {
-                from: 3,
-                to: 5
-            }]
-        });
-
-        expect(IndentRange.getRangesForIndentGuides(
-            extraContext, extraGuides,
-            extraActiveIndex < 0 ? undefined : extraGuides[extraActiveIndex]
-        )).toMatchObject({
-            guides: {
-                stack: [2, 3],
-                active: 5,
-                normal: []
-            },
-            backgrounds: [{
-                from: 0,
-                to: 2
-            }, {
-                from: 2,
-                to: 3
-            }, {
-                from: 3,
-                to: 5
-            }]
-        });
-    });
+            expect(IndentRange.getRangesForIndentGuides(
+                extraContext, extraGuides,
+                (
+                    extraActiveIndex < 0 ?
+                    undefined : extraGuides[extraActiveIndex]
+                )
+            )).toMatchObject({
+                guides: {
+                    stack: [2, 3],
+                    active: 5,
+                    normal: []
+                },
+                backgrounds: [{
+                    from: 0,
+                    to: 2
+                }, {
+                    from: 2,
+                    to: 3
+                }, {
+                    from: 3,
+                    to: 5
+                }]
+            });
+        }
+    );
 });

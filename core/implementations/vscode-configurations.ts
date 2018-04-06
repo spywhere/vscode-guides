@@ -5,7 +5,7 @@ export class VSCodeConfigurations implements Configurations {
     configurations: vscode.WorkspaceConfiguration;
 
     constructor() {
-        this.reload();
+        this.configurations = vscode.workspace.getConfiguration("guides");
     }
 
     reload() {

@@ -22,7 +22,9 @@
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
+        "no-floating-promises": true,
         "no-for-in-array": true,
+        // "no-implicit-dependencies": true,
         "no-inferred-empty-object-type": true,
         "no-invalid-template-strings": true,
         "no-invalid-this": true,
@@ -53,8 +55,9 @@
             true, "LF"
         ],
         "max-line-length": [
-            true, 80
+            true, 79
         ],
+        "no-duplicate-imports": true,
         "no-require-imports": true,
         "trailing-comma": [
             true,
@@ -76,7 +79,10 @@
         ],
         "arrow-parens": [true],
         "arrow-return-shorthand": [true, "multiline"],
+        "binary-expression-operand-order": true,
         "class-name": true,
+        "comment-format": [true, "check-space", "check-uppercase"],
+        "encoding": true,
         "import-spacing": true,
         "interface-name": [
             true,
@@ -85,6 +91,7 @@
         "interface-over-type-literal": true,
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
+        "no-boolean-literal-compare": true,
         "no-consecutive-blank-lines": [
             true, 2
         ],
@@ -116,6 +123,7 @@
             "always"
         ],
         "space-before-function-paren": [true, "never"],
+        "type-literal-delimiter": true,
         "variable-name": [
             true,
             "check-format",
@@ -139,6 +147,7 @@
         "no-extra-semi": true,
         "no-inner-declarations": [true, "both"],
         "no-invalid-regexp": true,
+        "ter-no-irregular-whitespace": true,
         "no-unexpected-multiline": true,
         "valid-typeof": true,
         // Best Practices

@@ -17,7 +17,9 @@ describe("active-guide", () => {
             })
         };
 
-        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText) || [];
+        let beforeGuides = IndentGuide.getGuides(
+            beforeContext, lineText
+        ) || [];
 
         let afterContext: EditorContext = {
             tabSize: 2,
@@ -55,7 +57,9 @@ describe("active-guide", () => {
             })
         };
 
-        let beforeGuides = IndentGuide.getGuides(beforeContext, lineText) || [];
+        let beforeGuides = IndentGuide.getGuides(
+            beforeContext, lineText
+        ) || [];
 
         let afterContext: EditorContext = {
             tabSize: 2,
