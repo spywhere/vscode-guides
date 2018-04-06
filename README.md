@@ -14,6 +14,8 @@ develop|master
 > **Hey There!** This is a development build for potential next major release.
 > 
 > For current stable release, please check out [master branch](https://github.com/spywhere/vscode-guides/tree/master).
+>
+> To see what could be implemented in the upcoming release, check out [a list of potential extension options](https://github.com/spywhere/vscode-guides/blob/develop/developers/options.md).
 
 ![Screenshot](images/screenshot.png)
 
