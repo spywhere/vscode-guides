@@ -332,12 +332,12 @@ class Guides {
                 {
                     light: {
                         gutterIconPath: path.join(
-                            __dirname, "..", "gutters", "open-light.png"
+                            __dirname, "..", "gutters", "open-light.svg"
                         ),
                     },
                     dark: {
                         gutterIconPath: path.join(
-                            __dirname, "..", "gutters", "open-dark.png"
+                            __dirname, "..", "gutters", "open-dark.svg"
                         ),
                     },
                     gutterIconSize: "contain"
@@ -347,12 +347,12 @@ class Guides {
                 {
                     light: {
                         gutterIconPath: path.join(
-                            __dirname, "..", "gutters", "close-light.png"
+                            __dirname, "..", "gutters", "close-light.svg"
                         ),
                     },
                     dark: {
                         gutterIconPath: path.join(
-                            __dirname, "..", "gutters", "close-dark.png"
+                            __dirname, "..", "gutters", "close-dark.svg"
                         ),
                     },
                     gutterIconSize: "contain"
