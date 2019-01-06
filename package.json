@@ -108,7 +108,9 @@
         },
         "guides.normal.colors.light": {
           "type": "string",
-          "default": ["rgba(220, 220, 220, 0.75)"],
+          "default": [
+            "rgba(220, 220, 220, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -117,7 +119,9 @@
         },
         "guides.normal.colors.dark": {
           "type": "string",
-          "default": ["rgba(60, 60, 60, 0.75)"],
+          "default": [
+            "rgba(60, 60, 60, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -156,7 +160,9 @@
         },
         "guides.active.colors.light": {
           "type": "string",
-          "default": ["rgba(200, 100, 100, 0.75)"],
+          "default": [
+            "rgba(200, 100, 100, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -165,7 +171,9 @@
         },
         "guides.active.colors.dark": {
           "type": "string",
-          "default": ["rgba(120, 60, 60, 0.75)"],
+          "default": [
+            "rgba(120, 60, 60, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -231,7 +239,9 @@
         },
         "guides.stack.colors.light": {
           "type": "string",
-          "default": ["rgba(180, 180, 180, 0.75)"],
+          "default": [
+            "rgba(180, 180, 180, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -240,7 +250,9 @@
         },
         "guides.stack.colors.dark": {
           "type": "string",
-          "default": ["rgba(80, 80, 80, 0.75)"],
+          "default": [
+            "rgba(80, 80, 80, 0.75)"
+          ],
           "items": {
             "type": "string",
             "pattern": "rgba\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(\\d(\\.\\d+)?|\\.\\d+)\\s*\\)"
@@ -289,7 +301,6 @@
     "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "jest",
-    "nsp": "nsp check",
     "coverage": "jest --verbose --coverage",
     "upload-coverage": "coveralls < ./coverage/lcov.info",
     "lint": "tslint --project tsconfig.json -e \"node_modules/**/*\" \"**/*.ts\""
@@ -303,16 +314,15 @@
     "@types/semver": "^5.5.0",
     "coveralls": "^3.0.0",
     "jest": "^22.4.3",
-    "nsp": "^3.2.1",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.1.0",
     "typescript": "^2.8.1",
-    "vscode": "^1.1.14"
+    "vscode": "^1.1.26"
   },
   "dependencies": {
     "lazy.js": "^0.5.1",
-    "lodash": "^4.17.5",
-    "request": "^2.85.0",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0",
     "semver": "^5.5.0"
   },
   "jest": {
