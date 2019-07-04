@@ -28,10 +28,10 @@ Guides is simply an extension that add various indentation guide lines
 - Color and style customizations
 - Hide on selection
 
-If you just want simple indentation guides, Guides kindly recommended that you use built-in indentation guides instead.
+If you just want simple indentation guides, Guides kindly recommends that you use the built-in indentation guides instead.
 
 ### How it works?
-Simply install the extension, Guides should do it job right away (after restart)!
+Simply install the extension and reload, Guides should do its job right away!
 
 **Note** that all guide lines only show when the text is exceeding the limit due to the extension API limitation.
 
@@ -57,8 +57,8 @@ Set to `true` to suppress any suggestion towards default Visual Studio Code beha
 
 ### FAQs
 
-**Q:** Why guide lines show fragmented on empty lines?  
-**A:** Guides use border to draw its guide lines which required the character to be there.
+**Q:** Why are guide lines fragmented on empty lines?  
+**A:** Guides use borders to draw its guide lines which require a character to be there.
 Since Visual Studio Code API does not provide the API for drawing line on empty space, this can be expected.
 
 **Q:** What is the different in each guide line type?  
